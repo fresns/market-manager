@@ -8,11 +8,11 @@
 
 namespace Fresns\MarketManager\Listeners;
 
-use Fresns\PluginManager\Plugin;
-use Fresns\MarketManager\Support\Json;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Fresns\MarketManager\Models\Plugin as PluginModel;
+use Fresns\MarketManager\Support\Json;
+use Fresns\PluginManager\Plugin;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
 class PluginInstallingListener
 {
@@ -35,18 +35,19 @@ class PluginInstallingListener
     public function handle($event)
     {
         $unikey = $event['unikey'] ?? null;
-        if (!$unikey) {
+        if (! $unikey) {
             return;
         }
 
-        if (!class_exists(Plugin::class)) {
+        if (! class_exists(Plugin::class)) {
             return;
         }
 
         $plugin = new Plugin($unikey);
         $pluginJson = Json::make($plugin->getPluginJsonPath())->get();
-        if (!$pluginJson) {
+        if (! $pluginJson) {
             \info('Failed to write plugin information to database');
+
             return;
         }
 

@@ -8,8 +8,8 @@
 
 namespace Fresns\MarketManager\Commands;
 
-use Illuminate\Support\Facades\Http;
 use Fresns\MarketManager\Models\Plugin;
+use Illuminate\Support\Facades\Http;
 
 class MarketUpgradeCommand extends MarketRequireCommand
 {
@@ -27,7 +27,7 @@ class MarketUpgradeCommand extends MarketRequireCommand
         $unikey = $this->argument('unikey');
 
         $plugin = Plugin::findByUnikey($unikey);
-        if (!$plugin) {
+        if (! $plugin) {
             throw new \RuntimeException("{$unikey}: No plugin related information found");
         }
 

@@ -8,11 +8,11 @@
 
 namespace Fresns\MarketManager\Commands;
 
+use Fresns\MarketManager\Models\Plugin;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Fresns\MarketManager\Models\Plugin;
+use Illuminate\Support\Str;
 
 class MarketRequireCommand extends Command
 {
@@ -75,11 +75,13 @@ class MarketRequireCommand extends Command
 
         if ($pluginResponse->failed()) {
             $this->error('Error: request failed (host or api)');
+
             return;
         }
 
         if ($pluginResponse->json('code') !== 0) {
             $this->error($pluginResponse->json('message'));
+
             return;
         }
 
@@ -100,8 +102,9 @@ class MarketRequireCommand extends Command
                 $unikey = Str::studly(basename($unikey));
 
                 $packageInfo = $this->getDownloadUrlFromPackagist();
-                if (!$packageInfo) {
+                if (! $packageInfo) {
                     $this->error('Failed to get extension package download address from packagist');
+
                     return;
                 }
 
@@ -114,8 +117,9 @@ class MarketRequireCommand extends Command
             case 'local':
                 $mimeType = File::mimeType($unikey);
                 $isAvailableLocalPath = str_contains($mimeType, 'zip') || str_contains($mimeType, 'directory');
-                if (!$isAvailableLocalPath) {
+                if (! $isAvailableLocalPath) {
                     $this->error('Not the correct local path. mimeType: $mimeType');
+
                     return;
                 }
 
@@ -124,8 +128,9 @@ class MarketRequireCommand extends Command
 
             case 'market':
                 $pluginResponse = $this->getDownloadUrlFromMarket();
-                if (!$pluginResponse) {
+                if (! $pluginResponse) {
                     $this->error('Failed to get extension package download address from app market');
+
                     return;
                 }
 
@@ -136,7 +141,6 @@ class MarketRequireCommand extends Command
                 break;
         }
 
-
         if ($type == 'local') {
             $filepath = $unikey;
         } else {
@@ -146,6 +150,7 @@ class MarketRequireCommand extends Command
             $zipBallResponse = Http::get($zipBall);
             if ($zipBallResponse->failed()) {
                 $this->error('Error: file download failed');
+
                 return;
             }
 
@@ -170,7 +175,7 @@ class MarketRequireCommand extends Command
         ]);
 
         // Update the upgrade_code field of the plugin table
-        if (!empty($pluginResponse)) {
+        if (! empty($pluginResponse)) {
             Plugin::upgrade([
                 'unikey' => $pluginResponse?->json('data.unikey') ?? $unikey,
                 'upgrade_code' => $pluginResponse?->json('data.upgradeCode'),

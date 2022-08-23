@@ -1,22 +1,28 @@
 <?php
 
+/*
+ * Fresns (https://fresns.org)
+ * Copyright (C) 2021-Present Jarvis Tang
+ * Released under the Apache-2.0 License.
+ */
+
 namespace Fresns\MarketManager\Models\Traits;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Cache;
 use Fresns\MarketManager\Models\Plugin;
+use Illuminate\Support\Facades\Cache;
 
 /**
- * Plugin
+ * Plugin.
  */
 trait PluginServiceTrait
 {
     public static function findById(?int $pluginId): ?Plugin
     {
-        $cacheKey = Plugin::CACHE_DETAIL_PREFIX . $pluginId;
+        $cacheKey = Plugin::CACHE_DETAIL_PREFIX.$pluginId;
 
         return static::remember($cacheKey, function () use ($pluginId) {
-            if (!$pluginId) {
+            if (! $pluginId) {
                 return null;
             }
 
@@ -26,10 +32,10 @@ trait PluginServiceTrait
 
     public static function findByUnikey(?string $unikey)
     {
-        $cacheKey = Plugin::CACHE_DETAIL_UNIKEY_PREFIX . $unikey;
+        $cacheKey = Plugin::CACHE_DETAIL_UNIKEY_PREFIX.$unikey;
 
         return static::remember($cacheKey, function () use ($unikey) {
-            if (!$unikey) {
+            if (! $unikey) {
                 return null;
             }
 
@@ -67,7 +73,7 @@ trait PluginServiceTrait
     public static function upgrade(array $data)
     {
         $plugin = Plugin::findByUnikey($data['unikey']);
-        if (!$plugin) {
+        if (! $plugin) {
             throw new \RuntimeException("Plugin not found {$data['unikey']}");
         }
 
@@ -83,7 +89,7 @@ trait PluginServiceTrait
     public static function deletePlugin(int $pluginId)
     {
         $plugin = Plugin::findById($pluginId);
-        if (!$plugin) {
+        if (! $plugin) {
             return false;
         }
 
@@ -92,7 +98,7 @@ trait PluginServiceTrait
 
     public static function remember(string $cacheKey, callable|Carbon|null $cacheTime, callable $callable = null, $forever = false)
     {
-        $nullCacheKey = 'null_key:' . $cacheKey;
+        $nullCacheKey = 'null_key:'.$cacheKey;
 
         $nullKeyNum = 10;
         if (Cache::get($nullCacheKey) > $nullKeyNum) {
@@ -111,7 +117,7 @@ trait PluginServiceTrait
             $cacheTime = now()->addSeconds($cacheSeconds);
         }
 
-        if (!is_callable($callable)) {
+        if (! is_callable($callable)) {
             return null;
         }
 
@@ -121,7 +127,7 @@ trait PluginServiceTrait
             $data = Cache::remember($cacheKey, $cacheTime, $callable);
         }
 
-        if (!$data) {
+        if (! $data) {
             Cache::pull($cacheKey);
 
             $currentCacheKeyNullNum = (int) Cache::get($nullCacheKey);
@@ -136,12 +142,12 @@ trait PluginServiceTrait
     public static function forgetCache(int $pluginId)
     {
         $plugin = Plugin::findById($pluginId);
-        if (!$plugin) {
+        if (! $plugin) {
             return false;
         }
 
-        Cache::forget(Plugin::CACHE_DETAIL_PREFIX . $plugin->id);
-        Cache::forget(Plugin::CACHE_DETAIL_UNIKEY_PREFIX . $plugin->unikey);
+        Cache::forget(Plugin::CACHE_DETAIL_PREFIX.$plugin->id);
+        Cache::forget(Plugin::CACHE_DETAIL_UNIKEY_PREFIX.$plugin->unikey);
 
         return true;
     }

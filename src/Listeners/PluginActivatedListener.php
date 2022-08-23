@@ -9,8 +9,8 @@
 namespace Fresns\MarketManager\Listeners;
 
 use Fresns\MarketManager\Models\Plugin;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
 class PluginActivatedListener
 {
@@ -33,12 +33,12 @@ class PluginActivatedListener
     public function handle($event)
     {
         $unikey = $event['unikey'] ?? null;
-        if (!$unikey) {
+        if (! $unikey) {
             return;
         }
 
         $plugin = Plugin::findByUnikey($unikey);
-        if (!$plugin) {
+        if (! $plugin) {
             return;
         }
 

@@ -8,9 +8,9 @@
 
 namespace Fresns\MarketManager\Commands;
 
-use Illuminate\Support\Facades\Http;
 use Fresns\MarketManager\Models\Plugin;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
 
 class MarketRemovePluginCommand extends Command
 {
@@ -34,7 +34,7 @@ class MarketRemovePluginCommand extends Command
             $plugin = $this->getPlugin();
             $plugin->forceDelete();
         } catch (\Throwable $e) {
-            \info("Failed to delete plugin data: $unikey " . $e->getMessage());
+            \info("Failed to delete plugin data: $unikey ".$e->getMessage());
         }
 
         $this->info("Delete plugin data successfully: $unikey");
@@ -45,7 +45,7 @@ class MarketRemovePluginCommand extends Command
         $unikey = $this->argument('unikey');
 
         $plugin = Plugin::findByUnikey($unikey);
-        if (!$plugin) {
+        if (! $plugin) {
             throw new \RuntimeException("{$unikey}: No plugin related information found");
         }
 

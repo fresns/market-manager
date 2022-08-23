@@ -8,11 +8,11 @@
 
 namespace Fresns\MarketManager\Listeners;
 
-use Fresns\ThemeManager\Theme;
-use Fresns\MarketManager\Support\Json;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Fresns\MarketManager\Models\Plugin as PluginModel;
+use Fresns\MarketManager\Support\Json;
+use Fresns\ThemeManager\Theme;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
 class ThemeInstallingListener
 {
@@ -35,18 +35,19 @@ class ThemeInstallingListener
     public function handle($event)
     {
         $unikey = $event['unikey'] ?? null;
-        if (!$unikey) {
+        if (! $unikey) {
             return;
         }
 
-        if (!class_exists(Theme::class)) {
+        if (! class_exists(Theme::class)) {
             return;
         }
 
         $theme = new Theme($unikey);
         $themeJson = Json::make($theme->getThemeJsonPath())->get();
-        if (!$themeJson) {
+        if (! $themeJson) {
             \info('Failed to write theme information to database');
+
             return;
         }
 

@@ -36,7 +36,7 @@ class EventServiceProvider extends ServiceProvider
             // activate plugin
             \Fresns\MarketManager\Listeners\PluginActivatedListener::class,
         ],
-        
+
         'plugin:deactivating' => [
             //
         ],

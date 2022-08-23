@@ -8,9 +8,9 @@
 
 namespace Fresns\MarketManager\Commands;
 
-use Illuminate\Support\Facades\Http;
 use Fresns\MarketManager\Models\Plugin;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
 
 class MarketRemoveThemeCommand extends MarketRemovePluginCommand
 {
@@ -34,7 +34,7 @@ class MarketRemoveThemeCommand extends MarketRemovePluginCommand
             $plugin = $this->getTheme();
             $plugin->forceDelete();
         } catch (\Throwable $e) {
-            \info("Failed to delete theme data: $unikey " . $e->getMessage());
+            \info("Failed to delete theme data: $unikey ".$e->getMessage());
         }
 
         $this->info("Delete theme data successfully: $unikey");
@@ -45,7 +45,7 @@ class MarketRemoveThemeCommand extends MarketRemovePluginCommand
         $unikey = $this->argument('unikey');
 
         $plugin = Plugin::findByUnikey($unikey);
-        if (!$plugin) {
+        if (! $plugin) {
             throw new \RuntimeException("{$unikey}: No theme related information found");
         }
 
