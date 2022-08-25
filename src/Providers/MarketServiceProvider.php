@@ -25,7 +25,7 @@ class MarketServiceProvider extends ServiceProvider
             dirname(__DIR__, 2).'/config/markets.php' => config_path('markets.php'),
         ], 'laravel-market-config');
 
-        $this->loadMigrationsFrom(dirname(__DIR__, 2) . '/migrations');
+        $this->loadMigrationsFrom(dirname(__DIR__, 2).'/migrations');
         $this->publishes([
             dirname(__DIR__, 2).'/migrations' => database_path('migrations'),
         ], 'laravel-market-migration');
