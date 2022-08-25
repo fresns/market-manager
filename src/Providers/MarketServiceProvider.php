@@ -20,10 +20,15 @@ class MarketServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../../config/markets.php', 'markets');
+        $this->mergeConfigFrom(dirname(__DIR__, 2).'/config/markets.php', 'markets');
         $this->publishes([
-            __DIR__.'/../../config/markets.php' => config_path('markets.php'),
+            dirname(__DIR__, 2).'/config/markets.php' => config_path('markets.php'),
         ], 'laravel-market-config');
+
+        $this->loadMigrationsFrom(dirname(__DIR__, 2) . '/migrations');
+        $this->publishes([
+            dirname(__DIR__, 2).'/migrations' => database_path('migrations'),
+        ], 'laravel-market-migration');
 
         $this->registerCommands([
             __DIR__.'/../Commands/*',

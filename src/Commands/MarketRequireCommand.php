@@ -92,12 +92,28 @@ class MarketRequireCommand extends Command
     {
         $unikey = $this->argument('unikey');
         $type = match (true) {
+            str_contains($unikey, '://') => 'url',
             $this->isComposerPackage($unikey) => 'composer',
             $this->isLocalPath($unikey) => 'local',
             default => 'market',
         };
 
         switch ($type) {
+            case 'url':
+                // get install file (zip)
+                $zipBall = $unikey;
+                if (str_contains($zipBall, 'github')) {
+                    $tempString = mb_strstr($zipBall, '/zipball', true);
+                    $tempString = mb_strstr($tempString, 'repos/');
+                    $packageName = str_replace('repos/', '', $tempString);
+                    $unikey = Str::studly(basename($packageName));
+                } else {
+                    $unikey = basename($zipBall);
+                }
+
+                $packageType = $this->argument('type') ?? 'plugin';
+                $extension = 'zip';
+                break;
             case 'composer':
                 $unikey = Str::studly(basename($unikey));
 
