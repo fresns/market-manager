@@ -188,6 +188,7 @@ class MarketRequireCommand extends Command
         // install command
         $this->call($command, [
             'path' => $filepath,
+            '--seed' => true,
         ]);
 
         // Update the upgrade_code field of the plugin table
