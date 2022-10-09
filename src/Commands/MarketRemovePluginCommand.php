@@ -29,26 +29,6 @@ class MarketRemovePluginCommand extends Command
             '--cleardata' => $this->option('cleardata') ?? null,
         ]);
 
-        // delete plugin data(database)
-        try {
-            $plugin = $this->getPlugin();
-            $plugin->forceDelete();
-        } catch (\Throwable $e) {
-            \info("Failed to delete plugin data: $unikey ".$e->getMessage());
-        }
-
         $this->info("Delete plugin data successfully: $unikey");
-    }
-
-    public function getPlugin()
-    {
-        $unikey = $this->argument('unikey');
-
-        $plugin = Plugin::findByUnikey($unikey);
-        if (! $plugin) {
-            throw new \RuntimeException("{$unikey}: No plugin related information found");
-        }
-
-        return $plugin;
     }
 }
