@@ -95,7 +95,7 @@ class MarketRequireCommand extends Command
 
         $type = $this->option('install_type');
 
-        if (!$type) {
+        if (! $type) {
             $type = match (true) {
                 str_contains($unikey, '://') => 'url',
                 $this->isComposerPackage($unikey) => 'composer',
