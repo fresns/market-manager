@@ -16,13 +16,14 @@ use Illuminate\Support\Str;
 
 class MarketRequireCommand extends Command
 {
-    protected $signature = 'market:require {unikey} {type?}';
+    protected $signature = 'market:require {unikey} {package_type=plugin}
+        {--install_type= : Plugin installation type}';
 
     protected $description = 'require fresns extensions';
 
     public function getPluginFromMarket()
     {
-        return Http::market()->get('/api/extensions/v2/download', [
+        return Http::market()->get('/api/marketplace/v2/download', [
             'unikey' => $this->argument('unikey'),
         ]);
     }
@@ -63,7 +64,7 @@ class MarketRequireCommand extends Command
 
         return [
             'zipBall' => $url,
-            'packageType' => $this->argument('type') ?? 'plugin',
+            'packageType' => $this->argument('package_type'),
             'extension' => $info['dist']['type'] ?? 'zip',
         ];
     }
@@ -91,12 +92,17 @@ class MarketRequireCommand extends Command
     public function handle()
     {
         $unikey = $this->argument('unikey');
-        $type = match (true) {
-            str_contains($unikey, '://') => 'url',
-            $this->isComposerPackage($unikey) => 'composer',
-            $this->isLocalPath($unikey) => 'local',
-            default => 'market',
-        };
+
+        $type = $this->option('install_type');
+
+        if (!$type) {
+            $type = match (true) {
+                str_contains($unikey, '://') => 'url',
+                $this->isComposerPackage($unikey) => 'composer',
+                $this->isLocalPath($unikey) => 'local',
+                default => 'market',
+            };
+        }
 
         switch ($type) {
             case 'url':
@@ -111,7 +117,7 @@ class MarketRequireCommand extends Command
                     $unikey = basename($zipBall);
                 }
 
-                $packageType = $this->argument('type') ?? 'plugin';
+                $packageType = $this->argument('package_type');
                 $extension = 'zip';
                 break;
             case 'composer':
@@ -139,13 +145,13 @@ class MarketRequireCommand extends Command
                     return;
                 }
 
-                $packageType = $this->argument('type') ?? 'plugin';
+                $packageType = $this->argument('package_type');
                 break;
 
             case 'market':
                 $pluginResponse = $this->getDownloadUrlFromMarket();
                 if (! $pluginResponse) {
-                    $this->error('Failed to get extension package download address from app market');
+                    $this->error('Failed to get extension package download address from app marketplace');
 
                     return;
                 }

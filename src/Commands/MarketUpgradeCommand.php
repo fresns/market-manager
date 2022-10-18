@@ -38,7 +38,7 @@ class MarketUpgradeCommand extends MarketRequireCommand
     {
         $plugin = $this->getPlugin();
 
-        return Http::market()->get('/api/extensions/v2/download', [
+        return Http::market()->get('/api/marketplace/v2/download', [
             'unikey' => $plugin->unikey,
             'version' => $plugin->version,
             'upgradeCode' => $plugin->upgrade_code,
