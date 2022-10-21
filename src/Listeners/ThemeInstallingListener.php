@@ -51,6 +51,9 @@ class ThemeInstallingListener
             return;
         }
 
+        $themeType = 4;
+        $themeJson['type'] = $themeType;
+
         $plugin = PluginModel::addPlugin($themeJson);
     }
 }
