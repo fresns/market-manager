@@ -14,7 +14,7 @@ use Fresns\PluginManager\Plugin;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class PluginInstallingListener
+class PluginInstalledListener
 {
     /**
      * Create the event listener.

@@ -12,7 +12,7 @@ use Fresns\MarketManager\Models\Plugin;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class PluginUninstallingListener
+class PluginUninstalledListener
 {
     /**
      * Create the event listener.

@@ -12,6 +12,6 @@ use Fresns\MarketManager\Models\Plugin;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class ThemeUninstallingListener extends PluginUninstallingListener
+class ThemeUninstalledListener extends PluginUninstalledListener
 {
 }

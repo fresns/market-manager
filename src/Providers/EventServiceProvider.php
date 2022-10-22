@@ -20,12 +20,12 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         // plugin
         'plugin:installing' => [
-            // get plugin.json insert into database
-            \Fresns\MarketManager\Listeners\PluginInstallingListener::class,
+            //
         ],
 
         'plugin:installed' => [
-            //
+            // get plugin.json insert into database
+            \Fresns\MarketManager\Listeners\PluginInstalledListener::class,
         ],
 
         'plugin:activating' => [
@@ -47,23 +47,31 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         'plugin:uninstalling' => [
-            // delete database data
-            \Fresns\MarketManager\Listeners\PluginUninstallingListener::class,
+            //
         ],
 
         'plugin:uninstalled' => [
-            //
+            // delete database data
+            \Fresns\MarketManager\Listeners\PluginUninstalledListener::class,
         ],
 
         // theme
         'theme:installing' => [
+            //
+        ],
+
+        'theme:uninstalled' => [
             // get theme.json insert into database
-            \Fresns\MarketManager\Listeners\ThemeInstallingListener::class,
+            \Fresns\MarketManager\Listeners\ThemeInstalledListener::class,
         ],
 
         'theme:uninstalling' => [
+            //
+        ],
+
+        'theme:uninstalled' => [
             // delete database data
-            \Fresns\MarketManager\Listeners\ThemeUninstallingListener::class,
+            \Fresns\MarketManager\Listeners\ThemeUninstalledListener::class,
         ],
     ];
 
