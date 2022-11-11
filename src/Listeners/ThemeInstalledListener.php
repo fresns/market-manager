@@ -50,6 +50,7 @@ class ThemeInstalledListener
 
             return;
         }
+        $themeJson['type'] = 4; // 4-theme;
 
         $plugin = PluginModel::addPlugin($themeJson);
     }

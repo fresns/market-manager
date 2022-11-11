@@ -60,7 +60,7 @@ class EventServiceProvider extends ServiceProvider
             //
         ],
 
-        'theme:uninstalled' => [
+        'theme:installed' => [
             // get theme.json insert into database
             \Fresns\MarketManager\Listeners\ThemeInstalledListener::class,
         ],
