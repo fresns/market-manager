@@ -23,7 +23,7 @@ class MarketRequireCommand extends Command
 
     public function getPluginFromMarket()
     {
-        return Http::market()->get('/api/marketplace/v2/download', [
+        return Http::market()->get('/api/open-source/v2/download', [
             'unikey' => $this->argument('unikey'),
         ]);
     }
