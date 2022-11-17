@@ -11,8 +11,6 @@ namespace Fresns\MarketManager\Listeners;
 use Fresns\MarketManager\Models\Plugin as PluginModel;
 use Fresns\MarketManager\Support\Json;
 use Fresns\PluginManager\Plugin;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class PluginInstalledListener
 {

@@ -10,7 +10,6 @@ namespace Fresns\MarketManager\Commands;
 
 use Fresns\MarketManager\Models\Plugin;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
 
 class MarketRemovePluginCommand extends Command
 {
