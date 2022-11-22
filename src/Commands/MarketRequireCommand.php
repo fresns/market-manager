@@ -190,10 +190,14 @@ class MarketRequireCommand extends Command
         };
 
         // install command
-        $this->call($command, [
+        $code = $this->call($command, [
             'path' => $filepath,
             '--seed' => true,
         ]);
+
+        if ($code != 0) {
+            return $code;
+        }
 
         // Update the upgrade_code field of the plugin table
         if (! empty($pluginResponse)) {
@@ -203,6 +207,6 @@ class MarketRequireCommand extends Command
             ]);
         }
 
-        return 0;
+        return $code;
     }
 }

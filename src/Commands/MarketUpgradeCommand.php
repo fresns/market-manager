@@ -39,10 +39,25 @@ class MarketUpgradeCommand extends MarketRequireCommand
     {
         $plugin = $this->getPlugin();
 
-        return Http::market()->get('/api/open-source/v2/download', [
+        // request market api
+        $pluginResponse = Http::market()->get('/api/open-source/v2/download', [
             'unikey' => $plugin->unikey,
             'version' => $plugin->version,
             'upgradeCode' => $plugin->upgrade_code,
         ]);
+
+        if ($pluginResponse->failed()) {
+            $this->error('Error: request failed (host or api)');
+
+            return;
+        }
+
+        if ($pluginResponse->json('code') !== 0) {
+            $this->error($pluginResponse->json('message'));
+
+            return;
+        }
+
+        return $pluginResponse;
     }
 }
