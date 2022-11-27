@@ -127,7 +127,7 @@ class MarketRequireCommand extends Command
                 if (! $packageInfo) {
                     $this->error('Failed to get extension package download address from packagist');
 
-                    return -1;
+                    return Command::FAILURE;
                 }
 
                 // get install file (zip)
@@ -142,7 +142,7 @@ class MarketRequireCommand extends Command
                 if (! $isAvailableLocalPath) {
                     $this->error('Not the correct local path. mimeType: $mimeType');
 
-                    return -1;
+                    return Command::FAILURE;
                 }
 
                 $packageType = $this->argument('package_type');
@@ -151,7 +151,7 @@ class MarketRequireCommand extends Command
             case 'market':
                 $pluginResponse = $this->getDownloadUrlFromMarket();
                 if (! $pluginResponse) {
-                    return -1;
+                    return Command::FAILURE;
                 }
 
                 // get install file (zip)
@@ -171,7 +171,7 @@ class MarketRequireCommand extends Command
             if ($zipBallResponse->failed()) {
                 $this->error('Error: file download failed');
 
-                return -1;
+                return Command::FAILURE;
             }
 
             File::ensureDirectoryExists($path = config('markets.paths.markets', storage_path('extensions')));
