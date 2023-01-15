@@ -23,11 +23,15 @@ class MarketRemovePluginCommand extends Command
         $unikey = $this->argument('unikey');
 
         // uninstall plugin
-        $this->call('plugin:uninstall', [
+        $exitCode = $this->call('plugin:uninstall', [
             'name' => $unikey,
             '--cleardata' => $this->option('cleardata') ?? null,
         ]);
 
-        $this->info("Delete plugin data successfully: $unikey");
+        if ($exitCode == 0) {
+            $this->info("Delete plugin data successfully: $unikey");
+        }
+
+        return $exitCode;
     }
 }

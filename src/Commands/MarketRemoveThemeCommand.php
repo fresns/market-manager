@@ -22,7 +22,7 @@ class MarketRemoveThemeCommand extends MarketRemovePluginCommand
         $unikey = $this->argument('unikey');
 
         // uninstall theme
-        $this->call('theme:uninstall', [
+        $exitCode = $this->call('theme:uninstall', [
             'name' => $unikey,
             '--cleardata' => $this->option('cleardata') ?? null,
         ]);
@@ -33,6 +33,7 @@ class MarketRemoveThemeCommand extends MarketRemovePluginCommand
             $plugin->forceDelete();
         } catch (\Throwable $e) {
             \info("Failed to delete theme data: $unikey ".$e->getMessage());
+            return;
         }
 
         $this->info("Delete theme data successfully: $unikey");

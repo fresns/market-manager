@@ -20,10 +20,14 @@ class MarketDeactivateCommand extends Command
     {
         $unikey = $this->argument('unikey');
 
-        $this->call('plugin:deactivate', [
+        $exitCode = $this->call('plugin:deactivate', [
             'name' => $unikey,
         ]);
 
-        $this->info("Deactivate plugin successfully: $unikey");
+        if ($exitCode == 0) {
+            $this->info("Deactivate plugin successfully: $unikey");
+        }
+
+        return $exitCode;
     }
 }

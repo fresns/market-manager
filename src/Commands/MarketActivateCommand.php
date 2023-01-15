@@ -20,10 +20,14 @@ class MarketActivateCommand extends Command
     {
         $unikey = $this->argument('unikey');
 
-        $this->call('plugin:activate', [
+        $exitCode = $this->call('plugin:activate', [
             'name' => $unikey,
         ]);
 
-        $this->info("Activate plugin successfully: $unikey");
+        if ($exitCode == 0) {
+            $this->info("Activate plugin successfully: $unikey");
+        }
+
+        return $exitCode;
     }
 }
