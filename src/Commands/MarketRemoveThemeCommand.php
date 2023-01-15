@@ -33,6 +33,7 @@ class MarketRemoveThemeCommand extends MarketRemovePluginCommand
             $plugin->forceDelete();
         } catch (\Throwable $e) {
             \info("Failed to delete theme data: $unikey ".$e->getMessage());
+
             return;
         }
 
