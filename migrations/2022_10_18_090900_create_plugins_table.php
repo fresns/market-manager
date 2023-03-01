@@ -13,11 +13,9 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
-     *
-     * @return void
+     * Run fresns migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('plugins', function (Blueprint $table) {
             $table->integer('id', true);
@@ -44,11 +42,9 @@ return new class extends Migration
     }
 
     /**
-     * Reverse the migrations.
-     *
-     * @return void
+     * Reverse fresns migrations.
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('plugins');
     }
