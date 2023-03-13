@@ -75,7 +75,7 @@ class MarketRequireCommand extends Command
         $pluginResponse = $this->getPluginFromMarket();
 
         if ($pluginResponse->failed()) {
-            $this->error('Error: request failed (host or api)' . "\n\n" . $pluginResponse->body());
+            $this->error('Error: request failed (host or api)'."\n\n".$pluginResponse->body());
 
             return;
         }
@@ -95,7 +95,7 @@ class MarketRequireCommand extends Command
 
         $type = $this->option('install_type');
 
-        if (!$type) {
+        if (! $type) {
             $type = match (true) {
                 str_contains($unikey, '://') => 'url',
                 $this->isComposerPackage($unikey) => 'composer',
@@ -124,7 +124,7 @@ class MarketRequireCommand extends Command
                 $unikey = Str::studly(basename($unikey));
 
                 $packageInfo = $this->getDownloadUrlFromPackagist();
-                if (!$packageInfo) {
+                if (! $packageInfo) {
                     $this->error('Failed to get extension package download address from packagist');
 
                     return Command::FAILURE;
@@ -139,7 +139,7 @@ class MarketRequireCommand extends Command
             case 'local':
                 $mimeType = File::mimeType($unikey);
                 $isAvailableLocalPath = str_contains($mimeType, 'zip') || str_contains($mimeType, 'directory');
-                if (!$isAvailableLocalPath) {
+                if (! $isAvailableLocalPath) {
                     $this->error('Not the correct local path. mimeType: $mimeType');
 
                     return Command::FAILURE;
@@ -150,7 +150,7 @@ class MarketRequireCommand extends Command
 
             case 'market':
                 $pluginResponse = $this->getDownloadUrlFromMarket();
-                if (!$pluginResponse) {
+                if (! $pluginResponse) {
                     return Command::FAILURE;
                 }
 
@@ -200,7 +200,7 @@ class MarketRequireCommand extends Command
         }
 
         // Update the upgrade_code field of the plugin table
-        if (!empty($pluginResponse)) {
+        if (! empty($pluginResponse)) {
             Plugin::upgrade([
                 'unikey' => $pluginResponse?->json('data.unikey') ?? $unikey,
                 'upgrade_code' => $pluginResponse?->json('data.upgradeCode'),
