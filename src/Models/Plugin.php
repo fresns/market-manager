@@ -27,4 +27,40 @@ class Plugin extends Model
     protected $casts = [
         'scene' => 'array',
     ];
+
+    public function getAccessUrlAttribute()
+    {
+        if (!$this->attributes['access_path']) {
+            return null;
+        }
+
+        if (filter_var($this->attributes['access_path'], FILTER_VALIDATE_URL)) {
+            return trim($this->attributes['access_path'], '/');
+        }
+        
+        $host = $this->plugin_host;
+        if (!$host) {
+            $host = config('app.url');
+        }
+
+        return trim($host, '/') . '/' . trim($this->attributes['access_path'], '/');
+    }
+
+    public function getSettingsUrlAttribute()
+    {
+        if (!$this->attributes['settings_path']) {
+            return null;
+        }
+
+        if (filter_var($this->attributes['settings_path'], FILTER_VALIDATE_URL)) {
+            return trim($this->attributes['settings_path'], '/');
+        }
+
+        $host = $this->plugin_host;
+        if (!$host) {
+            $host = config('app.url');
+        }
+
+        return trim($host, '/') . '/' . trim($this->attributes['settings_path'], '/');
+    }
 }
