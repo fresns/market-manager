@@ -26,7 +26,18 @@ return new class extends Migration
             $table->string('version', 16);
             $table->string('author', 64);
             $table->string('author_link', 128)->nullable();
-            $table->json('scene')->nullable();
+            switch (config('database.default')) {
+                case 'pgsql':
+                    $table->jsonb('scene')->nullable();
+                    break;
+
+                case 'sqlsrv':
+                    $table->nvarchar('scene', 'max')->nullable();
+                    break;
+
+                default:
+                    $table->json('scene')->nullable();
+            }
             $table->string('plugin_host', 128)->nullable();
             $table->string('access_path')->nullable();
             $table->string('settings_path', 128)->nullable();
