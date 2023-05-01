@@ -30,26 +30,26 @@ trait PluginServiceTrait
         });
     }
 
-    public static function findByUnikey(?string $unikey)
+    public static function findByFskey(?string $fskey)
     {
-        $cacheKey = Plugin::CACHE_DETAIL_UNIKEY_PREFIX.$unikey;
+        $cacheKey = Plugin::CACHE_DETAIL_FSKEY_PREFIX.$fskey;
 
-        return static::remember($cacheKey, function () use ($unikey) {
-            if (! $unikey) {
+        return static::remember($cacheKey, function () use ($fskey) {
+            if (! $fskey) {
                 return null;
             }
 
-            return Plugin::where('unikey', $unikey)->first();
+            return Plugin::where('fskey', $fskey)->first();
         });
     }
 
     public static function addPlugin(array $data)
     {
         $plugin = Plugin::updateOrCreate([
-            'unikey' => $data['unikey'],
+            'fskey' => $data['fskey'],
         ], [
             'name' => $data['name'],
-            'type' => $data['type'],
+            'type' => $data['type'] ?? 1,
             'description' => $data['description'],
             'version' => $data['version'],
             'author' => $data['author'],
@@ -72,9 +72,9 @@ trait PluginServiceTrait
 
     public static function upgrade(array $data)
     {
-        $plugin = Plugin::findByUnikey($data['unikey']);
+        $plugin = Plugin::findByFskey($data['fskey']);
         if (! $plugin) {
-            throw new \RuntimeException("Plugin not found {$data['unikey']}");
+            throw new \RuntimeException("Plugin not found {$data['fskey']}");
         }
 
         $plugin->update([
@@ -147,7 +147,7 @@ trait PluginServiceTrait
         }
 
         Cache::forget(Plugin::CACHE_DETAIL_PREFIX.$plugin->id);
-        Cache::forget(Plugin::CACHE_DETAIL_UNIKEY_PREFIX.$plugin->unikey);
+        Cache::forget(Plugin::CACHE_DETAIL_FSKEY_PREFIX.$plugin->fskey);
 
         return true;
     }

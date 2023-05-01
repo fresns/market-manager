@@ -12,20 +12,20 @@ use Illuminate\Console\Command;
 
 class MarketActivateCommand extends Command
 {
-    protected $signature = 'market:activate {unikey}';
+    protected $signature = 'market:activate {fskey}';
 
     protected $description = 'activate fresns extensions';
 
     public function handle()
     {
-        $unikey = $this->argument('unikey');
+        $fskey = $this->argument('fskey');
 
         $exitCode = $this->call('plugin:activate', [
-            'name' => $unikey,
+            'fskey' => $fskey,
         ]);
 
         if ($exitCode == 0) {
-            $this->info("Activate plugin successfully: $unikey");
+            $this->info("Activate plugin successfully: $fskey");
         }
 
         return $exitCode;

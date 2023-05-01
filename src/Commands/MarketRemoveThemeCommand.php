@@ -12,19 +12,19 @@ use Fresns\MarketManager\Models\Plugin;
 
 class MarketRemoveThemeCommand extends MarketRemovePluginCommand
 {
-    protected $signature = 'market:remove-theme {unikey}
-        {--cleardata : Trigger clear theme data}';
+    protected $signature = 'market:remove-theme {fskey}
+        {--cleardata=}';
 
     protected $description = 'remove fresns themes';
 
     public function handle()
     {
-        $unikey = $this->argument('unikey');
+        $fskey = $this->argument('fskey');
 
         // uninstall theme
         $exitCode = $this->call('theme:uninstall', [
-            'name' => $unikey,
-            '--cleardata' => $this->option('cleardata') ?? null,
+            'name' => $fskey,
+            '--cleardata' => $this->option('cleardata') ?? 0,
         ]);
 
         // delete theme data(database)
@@ -32,21 +32,21 @@ class MarketRemoveThemeCommand extends MarketRemovePluginCommand
             $plugin = $this->getTheme();
             $plugin->forceDelete();
         } catch (\Throwable $e) {
-            \info("Failed to delete theme data: $unikey ".$e->getMessage());
+            \info("Failed to delete theme data: $fskey ".$e->getMessage());
 
             return;
         }
 
-        $this->info("Delete theme data successfully: $unikey");
+        $this->info("Delete theme data successfully: $fskey");
     }
 
     public function getTheme()
     {
-        $unikey = $this->argument('unikey');
+        $fskey = $this->argument('fskey');
 
-        $plugin = Plugin::findByUnikey($unikey);
+        $plugin = Plugin::findByFskey($fskey);
         if (! $plugin) {
-            throw new \RuntimeException("{$unikey}: No theme related information found");
+            throw new \RuntimeException("{$fskey}: No theme related information found");
         }
 
         return $plugin;

@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 
 class MarketRequireCommand extends Command
 {
-    protected $signature = 'market:require {unikey} {package_type=plugin}
+    protected $signature = 'market:require {fskey} {package_type=plugin}
         {--install_type= : Plugin installation type}';
 
     protected $description = 'require fresns extensions';
@@ -24,26 +24,26 @@ class MarketRequireCommand extends Command
     public function getPluginFromMarket()
     {
         return Http::market()->get('/api/open-source/v2/download', [
-            'unikey' => $this->argument('unikey'),
+            'fskey' => $this->argument('fskey'),
         ]);
     }
 
-    public function isComposerPackage(string $unikey)
+    public function isComposerPackage(string $fskey)
     {
-        if ($this->isLocalPath($unikey)) {
+        if ($this->isLocalPath($fskey)) {
             return false;
         }
 
-        $parts = explode('/', $unikey);
+        $parts = explode('/', $fskey);
 
         return count($parts) == 2;
     }
 
-    public function isLocalPath(string $unikey)
+    public function isLocalPath(string $fskey)
     {
-        return file_exists($unikey)
-            || str_contains($unikey, '.')
-            || str_starts_with($unikey, '/');
+        return file_exists($fskey)
+            || str_contains($fskey, '.')
+            || str_starts_with($fskey, '/');
     }
 
     public function getPackageInfo(string $package)
@@ -55,7 +55,7 @@ class MarketRequireCommand extends Command
 
     public function getDownloadUrlFromPackagist()
     {
-        $info = $this->getPackageInfo($this->argument('unikey'));
+        $info = $this->getPackageInfo($this->argument('fskey'));
 
         $url = $info['dist']['url'] ?? null;
         if (empty($url)) {
@@ -91,15 +91,15 @@ class MarketRequireCommand extends Command
 
     public function handle()
     {
-        $unikey = $this->argument('unikey');
+        $fskey = $this->argument('fskey');
 
         $type = $this->option('install_type');
 
         if (! $type) {
             $type = match (true) {
-                str_contains($unikey, '://') => 'url',
-                $this->isComposerPackage($unikey) => 'composer',
-                $this->isLocalPath($unikey) => 'local',
+                str_contains($fskey, '://') => 'url',
+                $this->isComposerPackage($fskey) => 'composer',
+                $this->isLocalPath($fskey) => 'local',
                 default => 'market',
             };
         }
@@ -107,21 +107,21 @@ class MarketRequireCommand extends Command
         switch ($type) {
             case 'url':
                 // get install file (zip)
-                $zipBall = $unikey;
+                $zipBall = $fskey;
                 if (str_contains($zipBall, 'github')) {
                     $tempString = mb_strstr($zipBall, '/zipball', true);
                     $tempString = mb_strstr($tempString, 'repos/');
                     $packageName = str_replace('repos/', '', $tempString);
-                    $unikey = Str::studly(basename($packageName));
+                    $fskey = Str::studly(basename($packageName));
                 } else {
-                    $unikey = basename($zipBall);
+                    $fskey = basename($zipBall);
                 }
 
                 $packageType = $this->argument('package_type');
                 $extension = 'zip';
                 break;
             case 'composer':
-                $unikey = Str::studly(basename($unikey));
+                $fskey = Str::studly(basename($fskey));
 
                 $packageInfo = $this->getDownloadUrlFromPackagist();
                 if (! $packageInfo) {
@@ -137,7 +137,7 @@ class MarketRequireCommand extends Command
                 break;
 
             case 'local':
-                $mimeType = File::mimeType($unikey);
+                $mimeType = File::mimeType($fskey);
                 $isAvailableLocalPath = str_contains($mimeType, 'zip') || str_contains($mimeType, 'directory');
                 if (! $isAvailableLocalPath) {
                     $this->error('Not the correct local path. mimeType: $mimeType');
@@ -162,9 +162,9 @@ class MarketRequireCommand extends Command
         }
 
         if ($type == 'local') {
-            $filepath = $unikey;
+            $filepath = $fskey;
         } else {
-            $filename = sprintf('%s-%s.%s', $unikey, date('YmdHis'), $extension);
+            $filename = sprintf('%s-%s.%s', $fskey, date('YmdHis'), $extension);
 
             // get file
             $zipBallResponse = Http::get($zipBall);
@@ -202,7 +202,7 @@ class MarketRequireCommand extends Command
         // Update the upgrade_code field of the plugin table
         if (! empty($pluginResponse)) {
             Plugin::upgrade([
-                'unikey' => $pluginResponse?->json('data.unikey') ?? $unikey,
+                'fskey' => $pluginResponse?->json('data.fskey') ?? $fskey,
                 'upgrade_code' => $pluginResponse?->json('data.upgradeCode'),
             ]);
         }

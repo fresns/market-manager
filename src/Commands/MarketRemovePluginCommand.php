@@ -13,23 +13,23 @@ use Illuminate\Console\Command;
 
 class MarketRemovePluginCommand extends Command
 {
-    protected $signature = 'market:remove-plugin {unikey}
-        {--cleardata : Trigger clear plugin data}';
+    protected $signature = 'market:remove-plugin {fskey}
+        {--cleardata=}';
 
     protected $description = 'remove fresns extensions';
 
     public function handle()
     {
-        $unikey = $this->argument('unikey');
+        $fskey = $this->argument('fskey');
 
         // uninstall plugin
         $exitCode = $this->call('plugin:uninstall', [
-            'name' => $unikey,
-            '--cleardata' => $this->option('cleardata') ?? null,
+            'fskey' => $fskey,
+            '--cleardata' => $this->option('cleardata') ?? 0,
         ]);
 
         if ($exitCode == 0) {
-            $this->info("Delete plugin data successfully: $unikey");
+            $this->info("Delete plugin data successfully: $fskey");
         }
 
         return $exitCode;

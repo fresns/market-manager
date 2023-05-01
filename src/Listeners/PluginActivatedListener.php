@@ -30,12 +30,12 @@ class PluginActivatedListener
      */
     public function handle($event)
     {
-        $unikey = $event['unikey'] ?? null;
-        if (! $unikey) {
+        $fskey = $event['fskey'] ?? null;
+        if (! $fskey) {
             return;
         }
 
-        $plugin = Plugin::findByUnikey($unikey);
+        $plugin = Plugin::findByFskey($fskey);
         if (! $plugin) {
             return;
         }

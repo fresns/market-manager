@@ -15,8 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Plugin extends Model
 {
     const CACHE_DETAIL_PREFIX = 'plugin_id:';
-
-    const CACHE_DETAIL_UNIKEY_PREFIX = 'plugin_unikey:';
+    const CACHE_DETAIL_FSKEY_PREFIX = 'plugin_fskey:';
 
     use HasFactory;
     use SoftDeletes;

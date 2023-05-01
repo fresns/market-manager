@@ -19,8 +19,8 @@ return new class extends Migration
     {
         Schema::create('plugins', function (Blueprint $table) {
             $table->integer('id', true);
-            $table->string('unikey', 64)->unique('unikey');
-            $table->unsignedTinyInteger('type');
+            $table->string('fskey', 64)->unique('plugin_fskey');
+            $table->unsignedTinyInteger('type')->default(1);
             $table->string('name', 64);
             $table->string('description');
             $table->string('version', 16);

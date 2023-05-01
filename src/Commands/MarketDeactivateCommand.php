@@ -12,20 +12,20 @@ use Illuminate\Console\Command;
 
 class MarketDeactivateCommand extends Command
 {
-    protected $signature = 'market:deactivate {unikey}';
+    protected $signature = 'market:deactivate {fskey}';
 
     protected $description = 'deactivate fresns extensions';
 
     public function handle()
     {
-        $unikey = $this->argument('unikey');
+        $fskey = $this->argument('fskey');
 
         $exitCode = $this->call('plugin:deactivate', [
-            'name' => $unikey,
+            'fskey' => $fskey,
         ]);
 
         if ($exitCode == 0) {
-            $this->info("Deactivate plugin successfully: $unikey");
+            $this->info("Deactivate plugin successfully: $fskey");
         }
 
         return $exitCode;

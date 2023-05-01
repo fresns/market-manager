@@ -32,8 +32,8 @@ class ThemeInstalledListener
      */
     public function handle($event)
     {
-        $unikey = $event['unikey'] ?? null;
-        if (! $unikey) {
+        $fskey = $event['fskey'] ?? null;
+        if (! $fskey) {
             return;
         }
 
@@ -41,7 +41,7 @@ class ThemeInstalledListener
             return;
         }
 
-        $theme = new Theme($unikey);
+        $theme = new Theme($fskey);
         $themeJson = Json::make($theme->getThemeJsonPath())->get();
         if (! $themeJson) {
             \info('Failed to write theme information to database');

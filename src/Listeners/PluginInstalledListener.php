@@ -32,8 +32,8 @@ class PluginInstalledListener
      */
     public function handle($event)
     {
-        $unikey = $event['unikey'] ?? null;
-        if (! $unikey) {
+        $fskey = $event['fskey'] ?? null;
+        if (! $fskey) {
             return;
         }
 
@@ -41,7 +41,7 @@ class PluginInstalledListener
             return;
         }
 
-        $plugin = new Plugin($unikey);
+        $plugin = new Plugin($fskey);
         $pluginJson = Json::make($plugin->getPluginJsonPath())->get();
         if (! $pluginJson) {
             \info('Failed to write plugin information to database');

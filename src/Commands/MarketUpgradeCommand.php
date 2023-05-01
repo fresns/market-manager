@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Http;
 
 class MarketUpgradeCommand extends MarketRequireCommand
 {
-    protected $signature = 'market:upgrade {unikey} {package_type=plugin}
+    protected $signature = 'market:upgrade {fskey} {package_type=plugin}
         {--install_type= : Plugin installation type}';
 
     protected $description = 'upgrade fresns extensions';
@@ -25,11 +25,11 @@ class MarketUpgradeCommand extends MarketRequireCommand
 
     public function getPlugin()
     {
-        $unikey = $this->argument('unikey');
+        $fskey = $this->argument('fskey');
 
-        $plugin = Plugin::findByUnikey($unikey);
+        $plugin = Plugin::findByFskey($fskey);
         if (! $plugin) {
-            throw new \RuntimeException("{$unikey}: No plugin related information found");
+            throw new \RuntimeException("{$fskey}: No plugin related information found");
         }
 
         return $plugin;
@@ -41,7 +41,7 @@ class MarketUpgradeCommand extends MarketRequireCommand
 
         // request market api
         $pluginResponse = Http::market()->get('/api/open-source/v2/download', [
-            'unikey' => $plugin->unikey,
+            'fskey' => $plugin->fskey,
             'version' => $plugin->version,
             'upgradeCode' => $plugin->upgrade_code,
         ]);
