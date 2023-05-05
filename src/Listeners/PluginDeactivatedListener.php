@@ -41,7 +41,7 @@ class PluginDeactivatedListener
         }
 
         $plugin->update([
-            'is_enable' => false,
+            'is_enabled' => false,
         ]);
     }
 }

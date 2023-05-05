@@ -62,7 +62,7 @@ trait PluginServiceTrait
             'is_upgrade' => $data['is_upgrade'] ?? 0,
             'upgrade_code' => $data['upgradeCode'] ?? null,
             'upgrade_version' => $data['upgradeVersion'] ?? null,
-            'is_enable' => $data['isEnable'] ?? 0,
+            'is_enabled' => $data['isEnabled'] ?? 0,
         ]);
 
         static::forgetCache($plugin->id);
