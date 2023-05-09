@@ -12,8 +12,7 @@ use Fresns\MarketManager\Models\Plugin;
 
 class MarketRemoveThemeCommand extends MarketRemovePluginCommand
 {
-    protected $signature = 'market:remove-theme {fskey}
-        {--cleardata=}';
+    protected $signature = 'market:remove-theme {fskey}';
 
     protected $description = 'remove fresns themes';
 
@@ -23,8 +22,7 @@ class MarketRemoveThemeCommand extends MarketRemovePluginCommand
 
         // uninstall theme
         $exitCode = $this->call('theme:uninstall', [
-            'name' => $fskey,
-            '--cleardata' => $this->option('cleardata') ?? 0,
+            'fskey' => $fskey,
         ]);
 
         // delete theme data(database)
