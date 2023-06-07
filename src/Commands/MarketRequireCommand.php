@@ -176,6 +176,10 @@ class MarketRequireCommand extends Command
 
             File::ensureDirectoryExists($path = config('markets.paths.markets', storage_path('extensions')));
 
+            if (! is_file($path.'/.gitignore')) {
+                file_put_contents($path.'/.gitignore', '*'.PHP_EOL.'!.gitignore');
+            }
+
             // zipBall save path
             $filepath = "$path/$filename";
 
