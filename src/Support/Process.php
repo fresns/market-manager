@@ -21,16 +21,16 @@ class Process
 
         $process->setTimeout(900);
 
-        if ($process->isTty()) {
-            $process->setTty(true);
-        }
-
         try {
             if ($output !== false) {
                 $output = app(OutputInterface::class);
             }
         } catch (\Throwable $e) {
             $output = $output ?? null;
+        }
+
+        if ($process->isTty()) {
+            $process->setTty(true);
         }
 
         $envs = [
