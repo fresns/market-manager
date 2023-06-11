@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Http;
 
 class MarketUpgradeCommand extends MarketRequireCommand
 {
-    protected $signature = 'market:upgrade {fskey} {package_type=plugin}
+    protected $signature = 'market:upgrade {fskey}
         {--install_type= : Plugin installation type}';
 
     protected $description = 'upgrade fresns extensions';

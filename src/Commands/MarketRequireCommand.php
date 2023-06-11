@@ -8,6 +8,7 @@
 
 namespace Fresns\MarketManager\Commands;
 
+use Fresns\MarketManager\Support\Zip;
 use Fresns\MarketManager\Models\Plugin;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -16,10 +17,12 @@ use Illuminate\Support\Str;
 
 class MarketRequireCommand extends Command
 {
-    protected $signature = 'market:require {fskey} {package_type=plugin}
+    protected $signature = 'market:require {fskey}
         {--install_type= : Plugin installation type}';
 
     protected $description = 'require fresns extensions';
+
+    protected $packageType = null;
 
     public function getPluginFromMarket()
     {
@@ -34,13 +37,50 @@ class MarketRequireCommand extends Command
             return false;
         }
 
+        if (str_contains($fskey, 'composer')) {
+            return true;
+        }
+
         $parts = explode('/', $fskey);
 
         return count($parts) == 2;
     }
 
+    public function getPluginPath($fskey)
+    {
+        $extensionPath = config("markets.paths.base");
+        
+        return sprintf("%s/plugins/%s", rtrim($extensionPath), ltrim($fskey, '/'));
+    }
+
+    public function getThemePath($fskey)
+    {
+        $extensionPath = config("markets.paths.base");
+        
+        return sprintf("%s/themes/%s", rtrim($extensionPath), ltrim($fskey, '/'));
+    }
+    
+    public function getPluginDirectory($fskey)
+    {
+        return match ($this->packageType) {
+            default => $fskey,
+            'plugin' => $this->getPluginPath($fskey),
+            'theme' => $this->getThemePath($fskey),
+        };
+    }
+
     public function isLocalPath(string $fskey)
     {
+        if (file_exists($this->getPluginPath($fskey))) {
+            $this->packageType = 'plugin';
+            return true;
+        }
+
+        if (file_exists($this->getThemePath($fskey))) {
+            $this->packageType = 'theme';
+            return true;
+        }
+
         return file_exists($fskey)
             || str_contains($fskey, '.')
             || str_starts_with($fskey, '/');
@@ -53,9 +93,9 @@ class MarketRequireCommand extends Command
         return json_decode($process->getOutput(), true) ?? [];
     }
 
-    public function getDownloadUrlFromPackagist()
+    public function getDownloadUrlFromPackagist($fskey)
     {
-        $info = $this->getPackageInfo($this->argument('fskey'));
+        $info = $this->getPackageInfo($fskey);
 
         $url = $info['dist']['url'] ?? null;
         if (empty($url)) {
@@ -64,7 +104,6 @@ class MarketRequireCommand extends Command
 
         return [
             'zipBall' => $url,
-            'packageType' => $this->argument('package_type'),
             'extension' => $info['dist']['type'] ?? 'zip',
         ];
     }
@@ -108,44 +147,68 @@ class MarketRequireCommand extends Command
             case 'url':
                 // get install file (zip)
                 $zipBall = $fskey;
-                if (str_contains($zipBall, 'github')) {
+                if (str_contains($zipBall, 'api.github.com')) {
                     $tempString = mb_strstr($zipBall, '/zipball', true);
                     $tempString = mb_strstr($tempString, 'repos/');
                     $packageName = str_replace('repos/', '', $tempString);
+
+                    $fskey = Str::studly(basename($packageName));
+                } else if (str_contains($zipBall, 'github.com')) {
+                    $zipBallPathInfo = parse_url($zipBall);
+
+                    $zipBallData = explode('/', $zipBallPathInfo['path']);
+                    $zipBallData = array_values(array_filter($zipBallData));
+                    $packageName = $zipBallData[1] ?? null;
+                    if (!$packageName) {
+                        $this->error("Error: github zip link parse failed, url is: $zipBall");
+        
+                        return Command::FAILURE;
+                    }
+
                     $fskey = Str::studly(basename($packageName));
                 } else {
                     $fskey = basename($zipBall);
                 }
 
-                $packageType = $this->argument('package_type');
                 $extension = 'zip';
                 break;
-            case 'composer':
-                $fskey = Str::studly(basename($fskey));
 
-                $packageInfo = $this->getDownloadUrlFromPackagist();
+            case 'composer':
+                $packageName = Str::studly(basename($fskey));
+
+                if (str_contains($fskey, 'composer require')) {
+                    $fskey = str_replace('composer require', '', $fskey);
+                }
+
+                $packageInfo = $this->getDownloadUrlFromPackagist($fskey);
+
                 if (! $packageInfo) {
-                    $this->error('Failed to get extension package download address from packagist');
+                    $this->error('Failed to get extension package download address from packagist, fskey is: $fskey');
 
                     return Command::FAILURE;
                 }
 
                 // get install file (zip)
+                $fskey = $packageName;
                 $zipBall = $packageInfo['zipBall'];
-                $packageType = $packageInfo['packageType'];
                 $extension = $packageInfo['extension'];
                 break;
 
             case 'local':
-                $mimeType = File::mimeType($fskey);
+                $pluginDirectory = $this->getPluginDirectory($fskey);
+                if (!file_exists($pluginDirectory)) {
+                    $this->error("Not the correct local path. pluginDirectory: $pluginDirectory");
+
+                    return Command::FAILURE;
+                }
+
+                $mimeType = File::mimeType($pluginDirectory);
                 $isAvailableLocalPath = str_contains($mimeType, 'zip') || str_contains($mimeType, 'directory');
                 if (! $isAvailableLocalPath) {
                     $this->error('Not the correct local path. mimeType: $mimeType');
 
                     return Command::FAILURE;
                 }
-
-                $packageType = $this->argument('package_type');
                 break;
 
             case 'market':
@@ -156,28 +219,29 @@ class MarketRequireCommand extends Command
 
                 // get install file (zip)
                 $zipBall = $pluginResponse->json('data.zipBall');
-                $packageType = $pluginResponse->json('data.packageType');
-                $extension = pathinfo($pluginResponse->json('data.zipBall'), PATHINFO_EXTENSION);
+                $extension = pathinfo(parse_url($pluginResponse->json('data.zipBall'))['path'] ?? "", PATHINFO_EXTENSION);
                 break;
         }
 
         if ($type == 'local') {
             $filepath = $fskey;
         } else {
+            $extensionPath = storage_path('extensions');
+
+            File::ensureDirectoryExists($path = config('markets.paths.markets', $extensionPath));
+
+            if (! is_file($extensionPath.'/.gitignore')) {
+                file_put_contents($extensionPath.'/.gitignore', '*'.PHP_EOL.'!.gitignore');
+            }
+
             $filename = sprintf('%s-%s.%s', $fskey, date('YmdHis'), $extension);
 
             // get file
             $zipBallResponse = Http::get($zipBall);
             if ($zipBallResponse->failed()) {
-                $this->error('Error: file download failed');
+                $this->error("Error: file download failed, url is: $zipBall");
 
                 return Command::FAILURE;
-            }
-
-            File::ensureDirectoryExists($path = config('markets.paths.markets', storage_path('extensions')));
-
-            if (! is_file($path.'/.gitignore')) {
-                file_put_contents($path.'/.gitignore', '*'.PHP_EOL.'!.gitignore');
             }
 
             // zipBall save path
@@ -186,9 +250,30 @@ class MarketRequireCommand extends Command
             // save file
             File::put($filepath, $zipBallResponse->body());
         }
+        
+        // unzip packaeg and get install command
+        $zip = new Zip();
+
+        $tmpDirPath = $zip->unpack($filepath);
+
+        $pluginJsonPath = "{$tmpDirPath}/plugin.json";
+        $themeJsonPath = "{$tmpDirPath}/theme.json";
+        if (is_file($pluginJsonPath)) {
+            $this->packageType = 'plugin';
+        } else if (is_file($themeJsonPath)) {
+            $this->packageType = 'theme';
+        } else {
+            $this->packageType = null;
+        }
+        
+        if (!$this->packageType) {
+            $this->error("Error: unknown packageType, $filepath unzip to $tmpDirPath fail");
+
+            return Command::FAILURE;
+        }
 
         // get install command
-        $command = match ($packageType) {
+        $command = match ($this->packageType) {
             default => 'plugin:install',
             'theme' => 'theme:install',
         };
