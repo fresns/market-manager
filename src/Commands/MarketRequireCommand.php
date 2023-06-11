@@ -8,8 +8,8 @@
 
 namespace Fresns\MarketManager\Commands;
 
-use Fresns\MarketManager\Models\Plugin;
 use Fresns\MarketManager\Support\Zip;
+use Fresns\MarketManager\Models\Plugin;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -48,18 +48,18 @@ class MarketRequireCommand extends Command
 
     public function getPluginPath($fskey)
     {
-        $extensionPath = config('markets.paths.base');
-
-        return sprintf('%s/plugins/%s', rtrim($extensionPath), ltrim($fskey, '/'));
+        $extensionPath = config("markets.paths.base");
+        
+        return sprintf("%s/plugins/%s", rtrim($extensionPath), ltrim($fskey, '/'));
     }
 
     public function getThemePath($fskey)
     {
-        $extensionPath = config('markets.paths.base');
-
-        return sprintf('%s/themes/%s', rtrim($extensionPath), ltrim($fskey, '/'));
+        $extensionPath = config("markets.paths.base");
+        
+        return sprintf("%s/themes/%s", rtrim($extensionPath), ltrim($fskey, '/'));
     }
-
+    
     public function getPluginDirectory($fskey)
     {
         return match ($this->packageType) {
@@ -73,13 +73,11 @@ class MarketRequireCommand extends Command
     {
         if (file_exists($this->getPluginPath($fskey))) {
             $this->packageType = 'plugin';
-
             return true;
         }
 
         if (file_exists($this->getThemePath($fskey))) {
             $this->packageType = 'theme';
-
             return true;
         }
 
@@ -155,15 +153,15 @@ class MarketRequireCommand extends Command
                     $packageName = str_replace('repos/', '', $tempString);
 
                     $fskey = Str::studly(basename($packageName));
-                } elseif (str_contains($zipBall, 'github.com')) {
+                } else if (str_contains($zipBall, 'github.com')) {
                     $zipBallPathInfo = parse_url($zipBall);
 
                     $zipBallData = explode('/', $zipBallPathInfo['path']);
                     $zipBallData = array_values(array_filter($zipBallData));
                     $packageName = $zipBallData[1] ?? null;
-                    if (! $packageName) {
+                    if (!$packageName) {
                         $this->error("Error: github zip link parse failed, url is: $zipBall");
-
+        
                         return Command::FAILURE;
                     }
 
@@ -198,7 +196,7 @@ class MarketRequireCommand extends Command
 
             case 'local':
                 $pluginDirectory = $this->getPluginDirectory($fskey);
-                if (! file_exists($pluginDirectory)) {
+                if (!file_exists($pluginDirectory)) {
                     $this->error("Not the correct local path. pluginDirectory: $pluginDirectory");
 
                     return Command::FAILURE;
@@ -221,7 +219,7 @@ class MarketRequireCommand extends Command
 
                 // get install file (zip)
                 $zipBall = $pluginResponse->json('data.zipBall');
-                $extension = pathinfo(parse_url($pluginResponse->json('data.zipBall'))['path'] ?? '', PATHINFO_EXTENSION);
+                $extension = pathinfo(parse_url($pluginResponse->json('data.zipBall'))['path'] ?? "", PATHINFO_EXTENSION);
                 break;
         }
 
@@ -252,7 +250,7 @@ class MarketRequireCommand extends Command
             // save file
             File::put($filepath, $zipBallResponse->body());
         }
-
+        
         // unzip packaeg and get install command
         $zip = new Zip();
 
@@ -262,13 +260,13 @@ class MarketRequireCommand extends Command
         $themeJsonPath = "{$tmpDirPath}/theme.json";
         if (is_file($pluginJsonPath)) {
             $this->packageType = 'plugin';
-        } elseif (is_file($themeJsonPath)) {
+        } else if (is_file($themeJsonPath)) {
             $this->packageType = 'theme';
         } else {
             $this->packageType = null;
         }
-
-        if (! $this->packageType) {
+        
+        if (!$this->packageType) {
             $this->error("Error: unknown packageType, $filepath unzip to $tmpDirPath fail");
 
             return Command::FAILURE;
