@@ -211,6 +211,7 @@ class MarketRequireCommand extends Command
 
                     return Command::FAILURE;
                 }
+                $fskey = $pluginDirectory;
                 break;
 
             case 'market':
