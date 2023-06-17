@@ -197,6 +197,12 @@ class MarketRequireCommand extends Command
                 break;
 
             case 'local':
+                if (! $this->isLocalPath($fskey)) {
+                    $this->error("Not the correct plugin. pluginFsKey: $pluginDirectory");
+
+                    return Command::FAILURE;
+                }
+
                 $pluginDirectory = $this->getPluginDirectory($fskey);
                 if (! file_exists($pluginDirectory)) {
                     $this->error("Not the correct local path. pluginDirectory: $pluginDirectory");
@@ -254,10 +260,15 @@ class MarketRequireCommand extends Command
             File::put($filepath, $zipBallResponse->body());
         }
 
-        // unzip packaeg and get install command
-        $zip = new Zip();
+        try {
+            // unzip packaeg and get install command
+            $zip = new Zip();
+            $tmpDirPath = $zip->unpack($filepath);
+        } catch (\Throwable $e) {
+            $this->error("Error: file unzip failed, reason: {$e->getMessage()}, filepath is: $filepath");
 
-        $tmpDirPath = $zip->unpack($filepath);
+            return Command::FAILURE;
+        }
 
         $pluginJsonPath = "{$tmpDirPath}/plugin.json";
         $themeJsonPath = "{$tmpDirPath}/theme.json";
@@ -283,7 +294,7 @@ class MarketRequireCommand extends Command
 
         // install command
         $exitCode = $this->call($command, [
-            'path' => $filepath,
+            'path' => $tmpDirPath,
             '--seed' => true,
         ]);
 
