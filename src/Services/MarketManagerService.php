@@ -2,15 +2,15 @@
 
 /*
  * Fresns (https://fresns.org)
- * Copyright (C) 2021-Present Jarvis Tang
+ * Copyright (C) 2021-Present Jevan Tang
  * Released under the Apache-2.0 License.
  */
 
 namespace Fresns\MarketManager\Services;
 
-use Illuminate\Support\Facades\Http;
-use Fresns\MarketManager\Models\Plugin;
 use Fresns\CmdWordManager\Traits\CmdWordResponseTrait;
+use Fresns\MarketManager\Models\Plugin;
+use Illuminate\Support\Facades\Http;
 
 class MarketManagerService
 {
@@ -61,7 +61,7 @@ class MarketManagerService
         if (! $$plugin) {
             return $this->failure("{$wordBody['fskey']} Application does not exist");
         }
-        
+
         $pluginResponse = Http::market()->get('/api/open-source/v2/upgrade', [
             'fskey' => $wordBody['fskey'],
             'version' => $plugin['version'],

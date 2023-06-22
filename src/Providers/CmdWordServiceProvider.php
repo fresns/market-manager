@@ -2,14 +2,14 @@
 
 /*
  * Fresns (https://fresns.org)
- * Copyright (C) 2021-Present Jarvis Tang
+ * Copyright (C) 2021-Present Jevan Tang
  * Released under the Apache-2.0 License.
  */
 
 namespace Fresns\MarketManager\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Fresns\MarketManager\Services\MarketManagerService;
+use Illuminate\Support\ServiceProvider;
 
 class CmdWordServiceProvider extends ServiceProvider implements \Fresns\CmdWordManager\Contracts\CmdWordProviderContract
 {
