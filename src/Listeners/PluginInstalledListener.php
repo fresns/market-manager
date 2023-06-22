@@ -16,8 +16,6 @@ class PluginInstalledListener
 {
     /**
      * Create the event listener.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -28,9 +26,8 @@ class PluginInstalledListener
      * Handle the event.
      *
      * @param  object  $event
-     * @return void
      */
-    public function handle($event)
+    public function handle($event): void
     {
         $fskey = $event['fskey'] ?? null;
         if (! $fskey) {

@@ -198,7 +198,7 @@ class MarketRequireCommand extends Command
 
             case 'local':
                 if (! $this->isLocalPath($fskey)) {
-                    $this->error("Not the correct plugin. pluginFsKey: $pluginDirectory");
+                    $this->error("Not the correct plugin. pluginFsKey: $fskey");
 
                     return Command::FAILURE;
                 }

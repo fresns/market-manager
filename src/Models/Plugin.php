@@ -14,6 +14,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Plugin extends Model
 {
+    const TYPE_PLUGIN = 1;
+    const TYPE_PANEL = 2;
+    const TYPE_ENGINE = 3;
+    const TYPE_THEME = 4;
+    const TYPE_STANDALONE = 5;
+
     const CACHE_DETAIL_PREFIX = 'plugin_id:';
     const CACHE_DETAIL_FSKEY_PREFIX = 'plugin_fskey:';
 

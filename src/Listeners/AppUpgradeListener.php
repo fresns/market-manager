@@ -8,9 +8,9 @@
 
 namespace Fresns\MarketManager\Listeners;
 
-use Fresns\MarketManager\Models\Plugin;
+use Fresns\MarketManager\Models\Plugin as PluginModel;
 
-class PluginDeactivatedListener
+class AppUpgradeListener
 {
     /**
      * Create the event listener.
@@ -27,18 +27,16 @@ class PluginDeactivatedListener
      */
     public function handle($event): void
     {
-        $fskey = $event['fskey'] ?? null;
-        if (! $fskey) {
-            return;
-        }
+        $event['type'] = PluginModel::TYPE_STANDALONE;
 
-        $plugin = Plugin::findByFskey($fskey);
-        if (! $plugin) {
-            return;
-        }
+        // plugin data
+        $appInfo = collect($event)->only([
+            'fskey',
+            'type',
+            'version',
+            'upgradeCode',
+        ])->all();
 
-        $plugin->update([
-            'is_enabled' => false,
-        ]);
+        $plugin = PluginModel::upgrade($appInfo);
     }
 }

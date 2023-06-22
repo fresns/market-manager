@@ -73,24 +73,30 @@ class EventServiceProvider extends ServiceProvider
             // delete database data
             \Fresns\MarketManager\Listeners\ThemeUninstalledListener::class,
         ],
+
+        'app:download' => [
+            // app download from market, insert app meta info into database
+            \Fresns\MarketManager\Listeners\AppDownloadListener::class,
+        ],
+
+        'app:upgrade' => [
+            // app download from market, insert app meta info into database
+            \Fresns\MarketManager\Listeners\AppUpgradeListener::class,
+        ],
     ];
 
     /**
      * Register any events for your application.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         //
     }
 
     /**
      * Determine if events and listeners should be automatically discovered.
-     *
-     * @return bool
      */
-    public function shouldDiscoverEvents()
+    public function shouldDiscoverEvents(): bool
     {
         return false;
     }
