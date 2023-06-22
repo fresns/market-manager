@@ -44,9 +44,6 @@ class MarketManagerService
         if ($pluginResponse->json('code') == 0) {
             $data = $pluginResponse->json('data');
 
-            $extension = pathinfo(parse_url($data['zipBall'])['path'] ?? '', PATHINFO_EXTENSION);
-            $data['extension'] = $extension;
-
             $result = collect($data)->only([
                 'fskey',
                 'version',
@@ -55,7 +52,6 @@ class MarketManagerService
                 'author',
                 'zipBall',
                 'upgradeCode',
-                'extension',
             ]);
 
             event('app:handleData', [$result]);

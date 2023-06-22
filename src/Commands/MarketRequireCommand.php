@@ -99,7 +99,7 @@ class MarketRequireCommand extends Command
 
         return [
             'zipBall' => $url,
-            'extension' => $info['dist']['type'] ?? 'zip',
+            'fileExtension' => $info['dist']['type'] ?? 'zip',
         ];
     }
 
@@ -176,7 +176,7 @@ class MarketRequireCommand extends Command
                     $fskey = basename($zipBall);
                 }
 
-                $extension = 'zip';
+                $fileExtension = 'zip';
                 break;
 
             case 'composer':
@@ -197,7 +197,7 @@ class MarketRequireCommand extends Command
                 // get install file (zip)
                 $fskey = $packageName;
                 $zipBall = $packageInfo['zipBall'];
-                $extension = $packageInfo['extension'];
+                $fileExtension = $packageInfo['fileExtension'];
                 break;
 
             case 'local':
@@ -232,7 +232,7 @@ class MarketRequireCommand extends Command
 
                 // get install file (zip)
                 $zipBall = $pluginResponse->json('data.zipBall');
-                $extension = pathinfo(parse_url($pluginResponse->json('data.zipBall'))['path'] ?? '', PATHINFO_EXTENSION);
+                $fileExtension = pathinfo(parse_url($pluginResponse->json('data.zipBall'))['path'] ?? '', PATHINFO_EXTENSION);
                 break;
         }
 
@@ -247,7 +247,7 @@ class MarketRequireCommand extends Command
                 file_put_contents($extensionPath.'/.gitignore', '*'.PHP_EOL.'!.gitignore');
             }
 
-            $filename = sprintf('%s-%s.%s', $fskey, date('YmdHis'), $extension);
+            $filename = sprintf('%s-%s.%s', $fskey, date('YmdHis'), $fileExtension);
 
             // get file
             $zipBallResponse = Http::get($zipBall);
