@@ -28,7 +28,7 @@ class MarketRemoveThemeCommand extends MarketRemovePluginCommand
         // delete theme data(database)
         try {
             $plugin = $this->getTheme();
-            $plugin->forceDelete();
+            $plugin->delete();
         } catch (\Throwable $e) {
             \info("Failed to delete theme data: $fskey ".$e->getMessage());
 
