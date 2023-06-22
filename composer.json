@@ -26,7 +26,8 @@
     ],
     "require": {
         "php": "^8.0.2",
-        "laravel/framework": "^9.0|^10.0"
+        "laravel/framework": "^9.0|^10.0",
+        "fresns/cmd-word-manager": "^1.0"
     },
     "require-dev": {},
     "autoload": {
@@ -38,6 +39,7 @@
         "laravel": {
             "providers": [
                 "Fresns\\MarketManager\\Providers\\MarketServiceProvider",
+                "Fresns\\MarketManager\\Providers\\CmdWordServiceProvider",
                 "Fresns\\MarketManager\\Providers\\EventServiceProvider"
             ]
         },
