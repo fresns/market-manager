@@ -24,13 +24,6 @@ class MarketRequireCommand extends Command
 
     protected $packageType = null;
 
-    public function getPluginFromMarket()
-    {
-        return Http::market()->get('/api/open-source/v2/download', [
-            'fskey' => $this->argument('fskey'),
-        ]);
-    }
-
     public function isComposerPackage(string $fskey)
     {
         if ($this->isLocalPath($fskey)) {
@@ -113,7 +106,18 @@ class MarketRequireCommand extends Command
     public function getDownloadUrlFromMarket()
     {
         // request market api
-        $pluginResponse = $this->getPluginFromMarket();
+        $plugin = Plugin::withTrashed()->where('fskey', $this->argument('fskey'))->first();
+        if ($plugin) {
+            $pluginResponse = Http::market()->get('/api/open-source/v2/upgrade', [
+                'fskey' => $plugin->fskey,
+                'version' => $plugin->version,
+                'upgradeCode' => $plugin->upgrade_code,
+            ]);
+        } else {
+            $pluginResponse = Http::market()->get('/api/open-source/v2/download', [
+                'fskey' => $this->argument('fskey'),
+            ]);
+        }
 
         if ($pluginResponse->failed()) {
             $this->error('Error: request failed (host or api)'."\n\n".$pluginResponse->body());
@@ -303,11 +307,8 @@ class MarketRequireCommand extends Command
         }
 
         // Update the upgrade_code field of the plugin table
-        if (! empty($pluginResponse)) {
-            Plugin::upgrade([
-                'fskey' => $pluginResponse?->json('data.fskey') ?? $fskey,
-                'upgrade_code' => $pluginResponse?->json('data.upgradeCode'),
-            ]);
+        if ($pluginResponse) {
+            Plugin::handleAppData($pluginResponse->json('data'));
         }
 
         return $exitCode;

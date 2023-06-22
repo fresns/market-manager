@@ -42,7 +42,7 @@ class MarketRemoveThemeCommand extends MarketRemovePluginCommand
     {
         $fskey = $this->argument('fskey');
 
-        $plugin = Plugin::findByFskey($fskey);
+        $plugin = Plugin::withTrashed()->where('fskey', $fskey)->first();
         if (! $plugin) {
             throw new \RuntimeException("{$fskey}: No theme related information found");
         }

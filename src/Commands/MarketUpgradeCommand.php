@@ -27,7 +27,7 @@ class MarketUpgradeCommand extends MarketRequireCommand
     {
         $fskey = $this->argument('fskey');
 
-        $plugin = Plugin::findByFskey($fskey);
+        $plugin = Plugin::withTrashed()->where('fskey', $fskey)->first();
         if (! $plugin) {
             throw new \RuntimeException("{$fskey}: No plugin related information found");
         }
@@ -40,7 +40,7 @@ class MarketUpgradeCommand extends MarketRequireCommand
         $plugin = $this->getPlugin();
 
         // request market api
-        $pluginResponse = Http::market()->get('/api/open-source/v2/download', [
+        $pluginResponse = Http::market()->get('/api/open-source/v2/upgrade', [
             'fskey' => $plugin->fskey,
             'version' => $plugin->version,
             'upgradeCode' => $plugin->upgrade_code,

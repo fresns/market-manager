@@ -74,14 +74,9 @@ class EventServiceProvider extends ServiceProvider
             \Fresns\MarketManager\Listeners\ThemeUninstalledListener::class,
         ],
 
-        'app:download' => [
+        'app:handleData' => [
             // app download from market, insert app meta info into database
-            \Fresns\MarketManager\Listeners\AppDownloadListener::class,
-        ],
-
-        'app:upgrade' => [
-            // app download from market, insert app meta info into database
-            \Fresns\MarketManager\Listeners\AppUpgradeListener::class,
+            \Fresns\MarketManager\Listeners\HandleAppDataListener::class,
         ],
     ];
 

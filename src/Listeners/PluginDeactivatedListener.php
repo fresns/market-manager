@@ -32,7 +32,7 @@ class PluginDeactivatedListener
             return;
         }
 
-        $plugin = Plugin::findByFskey($fskey);
+        $plugin = Plugin::withTrashed()->where('fskey', $fskey)->first();
         if (! $plugin) {
             return;
         }

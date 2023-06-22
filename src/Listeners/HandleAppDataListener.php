@@ -10,7 +10,7 @@ namespace Fresns\MarketManager\Listeners;
 
 use Fresns\MarketManager\Models\Plugin as PluginModel;
 
-class AppUpgradeListener
+class HandleAppDataListener
 {
     /**
      * Create the event listener.
@@ -33,10 +33,13 @@ class AppUpgradeListener
         $appInfo = collect($event)->only([
             'fskey',
             'type',
+            'name',
+            'description',
             'version',
+            'author',
             'upgradeCode',
         ])->all();
 
-        $plugin = PluginModel::upgrade($appInfo);
+        $plugin = PluginModel::handleAppData($appInfo);
     }
 }

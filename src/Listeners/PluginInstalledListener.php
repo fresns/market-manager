@@ -46,6 +46,6 @@ class PluginInstalledListener
             return;
         }
 
-        $plugin = PluginModel::addPlugin($pluginJson);
+        $plugin = PluginModel::handleAppData($pluginJson);
     }
 }
