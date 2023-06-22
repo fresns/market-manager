@@ -20,7 +20,6 @@ class CmdWordServiceProvider extends ServiceProvider implements \Fresns\CmdWordM
     /* This is a map of command word and its provider. */
     protected $cmdWordsMap = [
         ['word' => 'appDownload', 'provider' => [MarketManagerService::class, 'appDownload']],
-        ['word' => 'appUpgrade', 'provider' => [MarketManagerService::class, 'appUpgrade']],
     ];
 
     /**
