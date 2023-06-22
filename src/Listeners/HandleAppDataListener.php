@@ -29,17 +29,6 @@ class HandleAppDataListener
     {
         $event['type'] = PluginModel::TYPE_STANDALONE;
 
-        // plugin data
-        $appInfo = collect($event)->only([
-            'fskey',
-            'type',
-            'name',
-            'description',
-            'version',
-            'author',
-            'upgradeCode',
-        ])->all();
-
-        $plugin = PluginModel::handleAppData($appInfo);
+        $plugin = PluginModel::handleAppData($event);
     }
 }
