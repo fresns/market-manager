@@ -308,7 +308,7 @@ class MarketRequireCommand extends Command
 
         // Update the upgrade_code field of the plugin table
         if (! empty($pluginResponse)) {
-            Plugin::handleAppData($pluginResponse->json('data'));
+            Plugin::updateUpgradeCode($pluginResponse->json('data'));
         }
 
         return $exitCode;
