@@ -20,52 +20,38 @@ class Plugin extends Model
     const TYPE_THEME = 4;
     const TYPE_STANDALONE = 5;
 
-    const CACHE_DETAIL_PREFIX = 'plugin_id:';
-    const CACHE_DETAIL_FSKEY_PREFIX = 'plugin_fskey:';
-
     use HasFactory;
     use SoftDeletes;
     use Traits\PluginServiceTrait;
 
     protected $guarded = [];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
     protected $casts = [
         'scene' => 'array',
     ];
 
-    public function getAccessUrlAttribute()
+    public function getSceneAttribute($value)
     {
-        if (! $this->attributes['access_path']) {
-            return null;
+        if (is_string($value)) {
+            $value = json_decode($value, true);
         }
 
-        if (filter_var($this->attributes['access_path'], FILTER_VALIDATE_URL)) {
-            return trim($this->attributes['access_path'], '/');
-        }
-
-        $host = $this->plugin_host;
-        if (! $host) {
-            $host = config('app.url');
-        }
-
-        return trim($host, '/').'/'.trim($this->attributes['access_path'], '/');
+        return $value ?? [];
     }
 
-    public function getSettingsUrlAttribute()
+    public function scopeType($query, $value)
     {
-        if (! $this->attributes['settings_path']) {
-            return null;
-        }
+        return $query->where('type', $value);
+    }
 
-        if (filter_var($this->attributes['settings_path'], FILTER_VALIDATE_URL)) {
-            return trim($this->attributes['settings_path'], '/');
-        }
-
-        $host = $this->plugin_host;
-        if (! $host) {
-            $host = config('app.url');
-        }
-
-        return trim($host, '/').'/'.trim($this->attributes['settings_path'], '/');
+    protected function serializeDate(\DateTimeInterface $date)
+    {
+        return $date->format($this->dateFormat ?: 'Y-m-d H:i:s');
     }
 }
