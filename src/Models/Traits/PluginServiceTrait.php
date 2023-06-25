@@ -18,7 +18,7 @@ trait PluginServiceTrait
             'fskey' => $data['fskey'],
         ], [
             'name' => $data['name'],
-            'type' => $data['type'] ?? Plugin::TYPE_THEME,
+            'type' => $data['type'] ?? Plugin::TYPE_PLUGIN,
             'description' => $data['description'],
             'version' => $data['version'],
             'author' => $data['author'],
