@@ -52,7 +52,7 @@ class MarketManagerService
                 'author',
                 'zipBall',
                 'upgradeCode',
-            ]);
+            ])->all();
 
             event('app:handleData', [$result]);
         }
