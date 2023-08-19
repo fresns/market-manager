@@ -140,11 +140,16 @@ class MarketRequireCommand extends Command
 
         $type = $this->option('install_type');
 
+        if ($type == 'local') {
+            if ($this->isLocalPath($fskey) == false) {
+                $type = null;
+            }
+        }
+
         if (! $type) {
             $type = match (true) {
                 str_contains($fskey, '://') => 'url',
                 $this->isComposerPackage($fskey) => 'composer',
-                $this->isLocalPath($fskey) => 'local',
                 default => 'market',
             };
         }
