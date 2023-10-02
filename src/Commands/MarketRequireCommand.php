@@ -41,16 +41,9 @@ class MarketRequireCommand extends Command
 
     public function getPluginPath($fskey)
     {
-        $extensionPath = config('markets.paths.base');
+        $pluginsPath = config('markets.paths.base');
 
-        return sprintf('%s/plugins/%s', rtrim($extensionPath), ltrim($fskey, '/'));
-    }
-
-    public function getThemePath($fskey)
-    {
-        $extensionPath = config('markets.paths.base');
-
-        return sprintf('%s/themes/%s', rtrim($extensionPath), ltrim($fskey, '/'));
+        return sprintf('%s/%s', rtrim($pluginsPath), ltrim($fskey, '/'));
     }
 
     public function getPluginDirectory($fskey)
@@ -58,7 +51,6 @@ class MarketRequireCommand extends Command
         return match ($this->packageType) {
             default => $fskey,
             'plugin' => $this->getPluginPath($fskey),
-            'theme' => $this->getThemePath($fskey),
         };
     }
 
@@ -66,12 +58,6 @@ class MarketRequireCommand extends Command
     {
         if (file_exists($this->getPluginPath($fskey))) {
             $this->packageType = 'plugin';
-
-            return true;
-        }
-
-        if (file_exists($this->getThemePath($fskey))) {
-            $this->packageType = 'theme';
 
             return true;
         }
@@ -206,13 +192,13 @@ class MarketRequireCommand extends Command
                 break;
 
             case 'local':
+                $pluginDirectory = $this->getPluginDirectory($fskey);
                 if (! $this->isLocalPath($fskey)) {
                     $this->error("Not the correct plugin. pluginFsKey: $fskey");
 
                     return Command::FAILURE;
                 }
 
-                $pluginDirectory = $this->getPluginDirectory($fskey);
                 if (! file_exists($pluginDirectory)) {
                     $this->error("Not the correct local path. pluginDirectory: $pluginDirectory");
 
@@ -244,12 +230,11 @@ class MarketRequireCommand extends Command
         if ($type == 'local') {
             $filepath = $fskey;
         } else {
-            $extensionPath = storage_path('extensions');
+            $path = rtrim(config('markets.paths.downloads', '/'));
+            File::ensureDirectoryExists($path);
 
-            File::ensureDirectoryExists($path = config('markets.paths.markets', $extensionPath));
-
-            if (! is_file($extensionPath.'/.gitignore')) {
-                file_put_contents($extensionPath.'/.gitignore', '*'.PHP_EOL.'!.gitignore');
+            if (! is_file($path.'/.gitignore')) {
+                file_put_contents($path.'/.gitignore', '*'.PHP_EOL.'!.gitignore');
             }
 
             $filename = sprintf('%s-%s.%s', $fskey, date('YmdHis'), $fileExtension);
@@ -280,11 +265,8 @@ class MarketRequireCommand extends Command
         }
 
         $pluginJsonPath = "{$tmpDirPath}/plugin.json";
-        $themeJsonPath = "{$tmpDirPath}/theme.json";
         if (is_file($pluginJsonPath)) {
             $this->packageType = 'plugin';
-        } elseif (is_file($themeJsonPath)) {
-            $this->packageType = 'theme';
         } else {
             $this->packageType = null;
         }
@@ -298,7 +280,7 @@ class MarketRequireCommand extends Command
         // get install command
         $command = match ($this->packageType) {
             default => 'plugin:install',
-            'theme' => 'theme:install',
+            'plugin' => 'plugin:install',
         };
 
         // install command
