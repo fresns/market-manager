@@ -87,14 +87,14 @@ class Zip
             return $targetPath;
         }
 
-        // Empty the directory to avoid leaving files of other plugins or themes
+        // Empty the directory to avoid leaving files of other plugins
         File::cleanDirectory($targetPath);
 
         // Directory without unzip operation, copy the original directory to the temporary directory
         if ($type == 1) {
             File::copyDirectory($sourcePath, $targetPath);
 
-            // Make sure the directory decompression level is the top level of the theme directory
+            // Make sure the directory decompression level is the top level of the plugin directory
             $this->ensureDoesntHaveSubdir($targetPath);
 
             return $targetPath;
@@ -105,7 +105,7 @@ class Zip
             $zipFile = $this->zipFile->openFile($sourcePath);
             $zipFile->extractTo($targetPath);
 
-            // Make sure the directory decompression level is the top level of the theme directory
+            // Make sure the directory decompression level is the top level of the plugin directory
             $this->ensureDoesntHaveSubdir($targetPath);
 
             // Decompress to the specified directory

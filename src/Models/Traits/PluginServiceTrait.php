@@ -18,7 +18,6 @@ trait PluginServiceTrait
             'fskey' => $data['fskey'],
         ], [
             'name' => $data['name'],
-            'type' => $data['type'] ?? Plugin::TYPE_PLUGIN,
             'description' => $data['description'],
             'version' => $data['version'],
             'author' => $data['author'],
@@ -26,7 +25,7 @@ trait PluginServiceTrait
             'scene' => $data['scene'] ?? null,
             'access_path' => $data['accessPath'] ?? null,
             'settings_path' => $data['settingsPath'] ?? null,
-            'theme_functions' => $data['functions'] ?? false,
+            'is_standalone' => $data['isStandalone'] ?? false,
             'is_upgrade' => false,
             'upgrade_code' => $data['upgradeCode'] ?? null,
             'deleted_at' => null,

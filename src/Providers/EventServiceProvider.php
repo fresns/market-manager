@@ -55,25 +55,6 @@ class EventServiceProvider extends ServiceProvider
             \Fresns\MarketManager\Listeners\PluginUninstalledListener::class,
         ],
 
-        // theme
-        'theme:installing' => [
-            //
-        ],
-
-        'theme:installed' => [
-            // get theme.json insert into database
-            \Fresns\MarketManager\Listeners\ThemeInstalledListener::class,
-        ],
-
-        'theme:uninstalling' => [
-            //
-        ],
-
-        'theme:uninstalled' => [
-            // delete database data
-            \Fresns\MarketManager\Listeners\ThemeUninstalledListener::class,
-        ],
-
         'app:handleData' => [
             // app download from market, insert app meta info into database
             \Fresns\MarketManager\Listeners\HandleAppDataListener::class,
