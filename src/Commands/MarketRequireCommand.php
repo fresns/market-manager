@@ -46,19 +46,11 @@ class MarketRequireCommand extends Command
         return sprintf('%s/%s', rtrim($pluginsPath), ltrim($fskey, '/'));
     }
 
-    public function getPluginDirectory($fskey)
-    {
-        return match ($this->packageType) {
-            default => $fskey,
-            'plugin' => $this->getPluginPath($fskey),
-        };
-    }
-
     public function isLocalPath(string $fskey)
     {
-        if (file_exists($this->getPluginPath($fskey))) {
-            $this->packageType = 'plugin';
+        $isLocalPath =  file_exists($this->getPluginPath($fskey));
 
+        if ($isLocalPath) {
             return true;
         }
 
@@ -106,7 +98,7 @@ class MarketRequireCommand extends Command
         }
 
         if ($pluginResponse->failed()) {
-            $this->error('Error: request failed (host or api)'."\n\n".$pluginResponse->body());
+            $this->error('Error: request failed (host or api)' . "\n\n" . $pluginResponse->body());
 
             return;
         }
@@ -132,7 +124,7 @@ class MarketRequireCommand extends Command
             }
         }
 
-        if (! $type) {
+        if (!$type) {
             $type = match (true) {
                 str_contains($fskey, '://') => 'url',
                 $this->isComposerPackage($fskey) => 'composer',
@@ -156,7 +148,7 @@ class MarketRequireCommand extends Command
                     $zipBallData = explode('/', $zipBallPathInfo['path']);
                     $zipBallData = array_values(array_filter($zipBallData));
                     $packageName = $zipBallData[1] ?? null;
-                    if (! $packageName) {
+                    if (!$packageName) {
                         $this->error("Error: github zip link parse failed, url is: $zipBall");
 
                         return Command::FAILURE;
@@ -179,7 +171,7 @@ class MarketRequireCommand extends Command
 
                 $packageInfo = $this->getDownloadUrlFromPackagist($fskey);
 
-                if (! $packageInfo) {
+                if (!$packageInfo) {
                     $this->error('Failed to get extension package download address from packagist, fskey is: $fskey');
 
                     return Command::FAILURE;
@@ -192,32 +184,32 @@ class MarketRequireCommand extends Command
                 break;
 
             case 'local':
-                $pluginDirectory = $this->getPluginDirectory($fskey);
-                if (! $this->isLocalPath($fskey)) {
+                $pluginPath = $this->getPluginPath($fskey);
+                if (!$this->isLocalPath($fskey)) {
                     $this->error("Not the correct plugin. pluginFsKey: $fskey");
 
                     return Command::FAILURE;
                 }
 
-                if (! file_exists($pluginDirectory)) {
-                    $this->error("Not the correct local path. pluginDirectory: $pluginDirectory");
+                if (!file_exists($pluginPath)) {
+                    $this->error("Not the correct local path. pluginPath: $pluginPath");
 
                     return Command::FAILURE;
                 }
 
-                $mimeType = File::mimeType($pluginDirectory);
+                $mimeType = File::mimeType($pluginPath);
                 $isAvailableLocalPath = str_contains($mimeType, 'zip') || str_contains($mimeType, 'directory');
-                if (! $isAvailableLocalPath) {
+                if (!$isAvailableLocalPath) {
                     $this->error('Not the correct local path. mimeType: $mimeType');
 
                     return Command::FAILURE;
                 }
-                $fskey = $pluginDirectory;
+                $fskey = $pluginPath;
                 break;
 
             case 'market':
                 $pluginResponse = $this->getDownloadUrlFromMarket();
-                if (! $pluginResponse) {
+                if (!$pluginResponse) {
                     return Command::FAILURE;
                 }
 
@@ -233,8 +225,8 @@ class MarketRequireCommand extends Command
             $path = rtrim(config('markets.paths.downloads', '/'));
             File::ensureDirectoryExists($path);
 
-            if (! is_file($path.'/.gitignore')) {
-                file_put_contents($path.'/.gitignore', '*'.PHP_EOL.'!.gitignore');
+            if (!is_file($path . '/.gitignore')) {
+                file_put_contents($path . '/.gitignore', '*' . PHP_EOL . '!.gitignore');
             }
 
             $filename = sprintf('%s-%s.%s', $fskey, date('YmdHis'), $fileExtension);
@@ -265,26 +257,14 @@ class MarketRequireCommand extends Command
         }
 
         $pluginJsonPath = "{$tmpDirPath}/plugin.json";
-        if (is_file($pluginJsonPath)) {
-            $this->packageType = 'plugin';
-        } else {
-            $this->packageType = null;
-        }
-
-        if (! $this->packageType) {
+        if (!is_file($pluginJsonPath)) {
             $this->error("Error: unknown packageType, $filepath unzip to $tmpDirPath fail");
 
             return Command::FAILURE;
         }
 
-        // get install command
-        $command = match ($this->packageType) {
-            default => 'plugin:install',
-            'plugin' => 'plugin:install',
-        };
-
         // install command
-        $exitCode = $this->call($command, [
+        $exitCode = $this->call('plugin:install', [
             'path' => $tmpDirPath,
             '--seed' => true,
         ]);
@@ -294,7 +274,7 @@ class MarketRequireCommand extends Command
         }
 
         // Update the upgrade_code field of the plugin table
-        if (! empty($pluginResponse)) {
+        if (!empty($pluginResponse)) {
             Plugin::updateUpgradeCode($pluginResponse->json('data'));
         }
 

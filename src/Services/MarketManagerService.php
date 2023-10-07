@@ -50,6 +50,7 @@ class MarketManagerService
                 'name',
                 'description',
                 'author',
+                'authorLink',
                 'zipBall',
                 'upgradeCode',
             ])->all();
