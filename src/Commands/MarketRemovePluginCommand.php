@@ -15,7 +15,7 @@ class MarketRemovePluginCommand extends Command
     protected $signature = 'market:remove-plugin {fskey}
         {--cleardata=}';
 
-    protected $description = 'remove fresns extensions';
+    protected $description = 'remove fresns plugin';
 
     public function handle()
     {

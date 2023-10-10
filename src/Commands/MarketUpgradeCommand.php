@@ -16,7 +16,7 @@ class MarketUpgradeCommand extends MarketRequireCommand
     protected $signature = 'market:upgrade {fskey}
         {--install_type= : Plugin installation type}';
 
-    protected $description = 'upgrade fresns extensions';
+    protected $description = 'upgrade fresns plugin';
 
     public function handle()
     {

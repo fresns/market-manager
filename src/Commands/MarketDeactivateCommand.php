@@ -14,7 +14,7 @@ class MarketDeactivateCommand extends Command
 {
     protected $signature = 'market:deactivate {fskey}';
 
-    protected $description = 'deactivate fresns extensions';
+    protected $description = 'deactivate fresns plugin';
 
     public function handle()
     {

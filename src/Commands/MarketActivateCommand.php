@@ -14,7 +14,7 @@ class MarketActivateCommand extends Command
 {
     protected $signature = 'market:activate {fskey}';
 
-    protected $description = 'activate fresns extensions';
+    protected $description = 'activate fresns plugin';
 
     public function handle()
     {
