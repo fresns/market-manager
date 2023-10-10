@@ -20,7 +20,7 @@ class MarketRequireCommand extends Command
     protected $signature = 'market:require {fskey}
         {--install_type= : Plugin installation type}';
 
-    protected $description = 'require fresns extensions';
+    protected $description = 'require fresns plugin';
 
     protected $packageType = null;
 
@@ -41,6 +41,10 @@ class MarketRequireCommand extends Command
 
     public function getPluginPath($fskey)
     {
+        if (str_starts_with($fskey, '/')) {
+            return $fskey;
+        }
+
         $pluginsPath = config('markets.paths.base');
 
         return sprintf('%s/%s', rtrim($pluginsPath), ltrim($fskey, '/'));

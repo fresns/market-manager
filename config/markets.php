@@ -9,6 +9,7 @@
 return [
     'paths' => [
         'base' => base_path('plugins'),
+        'uploads' => base_path('storage/plugins/uploads'),
         'downloads' => base_path('storage/plugins/downloads'),
         'unzip_target_path' => base_path('storage/plugins/.tmp'),
     ],
