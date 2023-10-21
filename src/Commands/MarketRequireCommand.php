@@ -137,7 +137,8 @@ class MarketRequireCommand extends Command
         }
 
         if (! $fskey) {
-            $this->error("Error: fskey is empty");
+            $this->error('Error: fskey is empty');
+
             return Command::FAILURE;
         }
 
