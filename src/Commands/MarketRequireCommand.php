@@ -136,6 +136,11 @@ class MarketRequireCommand extends Command
             };
         }
 
+        if (! $fskey) {
+            $this->error("Error: fskey is empty");
+            return Command::FAILURE;
+        }
+
         switch ($type) {
             case 'url':
                 // get install file (zip)
