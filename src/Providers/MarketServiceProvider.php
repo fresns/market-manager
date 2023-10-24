@@ -66,9 +66,20 @@ class MarketServiceProvider extends ServiceProvider
         }
 
         Http::macro('market', function () {
-            return Http::baseUrl(config('app.url'))->withHeaders([
-                'accept' => 'application/json',
-            ]);
+            $httpProxy = config('app.http_proxy');
+
+            $http = Http::baseUrl(config('app.url'))
+                ->withHeaders([
+                    'accept' => 'application/json',
+                ])
+                ->withOptions([
+                    'proxy' => [
+                        'http' => $httpProxy,
+                        'https' => $httpProxy,
+                    ],
+                ]);
+
+            return $http;
         });
     }
 }
