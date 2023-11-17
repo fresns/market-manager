@@ -29,6 +29,6 @@ class HandleAppDataListener
     {
         $event['isStandalone'] = true;
 
-        $plugin = PluginModel::handleAppData($event);
+        $plugin = PluginModel::handleAppData((array) $event);
     }
 }
