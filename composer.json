@@ -26,8 +26,8 @@
     ],
     "require": {
         "php": "^8.0.2",
-        "laravel/framework": "^9.0|^10.0",
-        "fresns/cmd-word-manager": "^1.0"
+        "laravel/framework": "^9.0|^10.0|^11.0",
+        "fresns/cmd-word-manager": "^1.5"
     },
     "require-dev": {},
     "autoload": {
@@ -42,40 +42,6 @@
                 "Fresns\\MarketManager\\Providers\\CmdWordServiceProvider",
                 "Fresns\\MarketManager\\Providers\\EventServiceProvider"
             ]
-        },
-        "hooks": {
-            "pre-commit": [
-                "composer check-style",
-                "composer test"
-            ],
-            "pre-push": [
-                "composer test",
-                "composer check-style"
-            ]
         }
-    },
-    "scripts": {
-        "post-update-cmd": [
-            "cghooks remove",
-            "cghooks add --ignore-lock",
-            "cghooks update"
-        ],
-        "post-merge": "composer install",
-        "post-install-cmd": [
-            "cghooks remove",
-            "cghooks add --ignore-lock",
-            "cghooks update"
-        ],
-        "cghooks": "vendor/bin/cghooks",
-        "check-style": "php-cs-fixer fix --using-cache=no --diff --dry-run --ansi",
-        "fix-style": "php-cs-fixer fix --using-cache=no --ansi",
-        "test": "phpunit --colors",
-        "psalm": "psalm --show-info=true --no-cache",
-        "psalm-fix": "psalm --no-cache --alter --issues=MissingReturnType,MissingParamType"
-    },
-    "scripts-descriptions": {
-        "test": "Run all tests.",
-        "check-style": "Run style checks (only dry run - no fixing!).",
-        "fix-style": "Run style checks and fix violations."
     }
 }

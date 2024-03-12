@@ -8,9 +8,10 @@
 
 return [
     'paths' => [
-        'base' => base_path('plugins'),
-        'uploads' => base_path('storage/plugins/uploads'),
-        'downloads' => base_path('storage/plugins/downloads'),
-        'unzip_target_path' => base_path('storage/plugins/.tmp'),
+        'plugins' => base_path('plugins'),
+        'themes' => base_path('themes'),
+        'uploads' => base_path('storage/extensions/uploads'),
+        'downloads' => base_path('storage/extensions/downloads'),
+        'unzip_target_path' => base_path('storage/extensions/.tmp'),
     ],
 ];
