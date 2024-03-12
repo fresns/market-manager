@@ -9,7 +9,7 @@
 namespace Fresns\MarketManager\Services;
 
 use Fresns\CmdWordManager\Traits\CmdWordResponseTrait;
-use Fresns\MarketManager\Models\Plugin;
+use Fresns\MarketManager\Models\App;
 use Illuminate\Support\Facades\Http;
 
 class MarketManagerService
@@ -22,30 +22,31 @@ class MarketManagerService
             return $this->failure('fskey cannot be empty');
         }
 
-        $plugin = Plugin::withTrashed()->where('fskey', $wordBody['fskey'])->first();
-        if ($plugin) {
-            $pluginResponse = Http::market()->get('/api/open-source/v2/upgrade', [
-                'fskey' => $plugin->fskey,
-                'version' => $plugin->version,
-                'upgradeCode' => $plugin->upgrade_code,
+        $app = App::withTrashed()->where('fskey', $wordBody['fskey'])->first();
+        if ($app) {
+            $appResponse = Http::market()->get('/api/open-source/v3/upgrade', [
+                'fskey' => $app->fskey,
+                'version' => $app->version,
+                'upgradeCode' => $app->upgrade_code,
                 'type' => 'download',
             ]);
         } else {
-            $pluginResponse = Http::market()->get('/api/open-source/v2/download', [
+            $appResponse = Http::market()->get('/api/open-source/v3/download', [
                 'fskey' => $wordBody['fskey'],
                 'type' => 'download',
             ]);
         }
 
-        if (! $pluginResponse) {
+        if (! $appResponse) {
             return $this->failure('Fresns Marketplace request failed, no response message received.');
         }
 
-        if ($pluginResponse->json('code') == 0) {
-            $data = $pluginResponse->json('data');
+        if ($appResponse->json('code') == 0) {
+            $data = $appResponse->json('data');
 
             $result = collect($data)->only([
                 'fskey',
+                'type',
                 'version',
                 'name',
                 'description',
@@ -58,6 +59,6 @@ class MarketManagerService
             event('app:handleData', [$result]);
         }
 
-        return $this->success($pluginResponse->json('data'), $pluginResponse->json('message'), $pluginResponse->json('code'));
+        return $this->success($appResponse->json('data'), $appResponse->json('message'), $appResponse->json('code'));
     }
 }

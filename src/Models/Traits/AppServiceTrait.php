@@ -8,21 +8,31 @@
 
 namespace Fresns\MarketManager\Models\Traits;
 
-use Fresns\MarketManager\Models\Plugin;
+use Fresns\MarketManager\Models\App;
 
-trait PluginServiceTrait
+trait AppServiceTrait
 {
     public static function handleAppData(array $data)
     {
-        $plugin = Plugin::withTrashed()->updateOrCreate([
+        $dataType = $data['type'] ?? null;
+
+        $appType = match ($dataType) {
+            'plugin' => App::TYPE_PLUGIN,
+            'theme' => App::TYPE_THEME,
+            'app' => App::TYPE_APP_DOWNLOAD,
+            default => App::TYPE_APP_REMOTE,
+        };
+
+        $app = App::withTrashed()->updateOrCreate([
             'fskey' => $data['fskey'],
         ], [
+            'type' => $appType,
             'name' => $data['name'],
             'description' => $data['description'],
             'version' => $data['version'],
             'author' => $data['author'],
             'author_link' => $data['authorLink'] ?? null,
-            'scene' => $data['scene'] ?? null,
+            'panel_usages' => $data['panelUsages'] ?? null,
             'access_path' => $data['accessPath'] ?? null,
             'settings_path' => $data['settingsPath'] ?? null,
             'is_standalone' => $data['isStandalone'] ?? false,
@@ -31,14 +41,14 @@ trait PluginServiceTrait
             'deleted_at' => null,
         ]);
 
-        return $plugin;
+        return $app;
     }
 
     public static function updateUpgradeCode(array $data)
     {
-        $plugin = Plugin::withTrashed()->where('fskey', $data['fskey'])->first();
-        if ($plugin) {
-            $plugin->update([
+        $app = App::withTrashed()->where('fskey', $data['fskey'])->first();
+        if ($app) {
+            $app->update([
                 'is_upgrade' => false,
                 'upgrade_code' => $data['upgradeCode'] ?? null,
                 'upgrade_version' => null,
@@ -46,6 +56,6 @@ trait PluginServiceTrait
             ]);
         }
 
-        return $plugin;
+        return $app;
     }
 }

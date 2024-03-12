@@ -8,7 +8,7 @@
 
 namespace Fresns\MarketManager\Listeners;
 
-use Fresns\MarketManager\Models\Plugin;
+use Fresns\MarketManager\Models\App;
 
 class PluginUninstalledListener
 {
@@ -32,11 +32,11 @@ class PluginUninstalledListener
             return;
         }
 
-        $plugin = Plugin::withTrashed()->where('fskey', $fskey)->first();
-        if (! $plugin) {
+        $app = App::withTrashed()->where('fskey', $fskey)->first();
+        if (! $app) {
             return;
         }
 
-        $plugin->delete();
+        $app->delete();
     }
 }

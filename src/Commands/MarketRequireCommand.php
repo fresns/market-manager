@@ -8,7 +8,7 @@
 
 namespace Fresns\MarketManager\Commands;
 
-use Fresns\MarketManager\Models\Plugin;
+use Fresns\MarketManager\Models\App;
 use Fresns\MarketManager\Support\Zip;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -50,11 +50,33 @@ class MarketRequireCommand extends Command
         return sprintf('%s/%s', rtrim($pluginsPath), ltrim($fskey, '/'));
     }
 
+    public function getThemePath($fskey)
+    {
+        $themesPath = config('markets.paths.base');
+
+        return sprintf('%s/themes/%s', rtrim($themesPath), ltrim($fskey, '/'));
+    }
+
+    public function getPluginDirectory($fskey)
+    {
+        return match ($this->packageType) {
+            default => $fskey,
+            'plugin' => $this->getPluginPath($fskey),
+            'theme' => $this->getThemePath($fskey),
+        };
+    }
+
     public function isLocalPath(string $fskey)
     {
-        $isLocalPath = file_exists($this->getPluginPath($fskey));
+        if (file_exists($this->getPluginPath($fskey))) {
+            $this->packageType = 'plugin';
 
-        if ($isLocalPath) {
+            return true;
+        }
+
+        if (file_exists($this->getThemePath($fskey))) {
+            $this->packageType = 'theme';
+
             return true;
         }
 
@@ -88,32 +110,32 @@ class MarketRequireCommand extends Command
     public function getDownloadUrlFromMarket()
     {
         // request market api
-        $plugin = Plugin::withTrashed()->where('fskey', $this->argument('fskey'))->first();
-        if ($plugin) {
-            $pluginResponse = Http::market()->get('/api/open-source/v2/upgrade', [
-                'fskey' => $plugin->fskey,
-                'version' => $plugin->version,
-                'upgradeCode' => $plugin->upgrade_code,
+        $app = App::withTrashed()->where('fskey', $this->argument('fskey'))->first();
+        if ($app) {
+            $appResponse = Http::market()->get('/api/open-source/v3/upgrade', [
+                'fskey' => $app->fskey,
+                'version' => $app->version,
+                'upgradeCode' => $app->upgrade_code,
             ]);
         } else {
-            $pluginResponse = Http::market()->get('/api/open-source/v2/download', [
+            $appResponse = Http::market()->get('/api/open-source/v3/download', [
                 'fskey' => $this->argument('fskey'),
             ]);
         }
 
-        if ($pluginResponse->failed()) {
-            $this->error('Error: request failed (host or api)'."\n\n".$pluginResponse->body());
+        if ($appResponse->failed()) {
+            $this->error('Error: request failed (host or api)'."\n\n".$appResponse->body());
 
             return;
         }
 
-        if ($pluginResponse->json('code') !== 0) {
-            $this->error($pluginResponse->json('message'));
+        if ($appResponse->json('code') !== 0) {
+            $this->error($appResponse->json('message'));
 
             return;
         }
 
-        return $pluginResponse;
+        return $appResponse;
     }
 
     public function handle()
@@ -194,13 +216,13 @@ class MarketRequireCommand extends Command
                 break;
 
             case 'local':
-                $pluginPath = $this->getPluginPath($fskey);
                 if (! $this->isLocalPath($fskey)) {
                     $this->error("Not the correct plugin. pluginFsKey: $fskey");
 
                     return Command::FAILURE;
                 }
 
+                $pluginPath = $this->getPluginDirectory($fskey);
                 if (! file_exists($pluginPath)) {
                     $this->error("Not the correct local path. pluginPath: $pluginPath");
 
@@ -267,14 +289,29 @@ class MarketRequireCommand extends Command
         }
 
         $pluginJsonPath = "{$tmpDirPath}/plugin.json";
-        if (! is_file($pluginJsonPath)) {
+        $themeJsonPath = "{$tmpDirPath}/theme.json";
+        if (is_file($pluginJsonPath)) {
+            $this->packageType = 'plugin';
+        } elseif (is_file($themeJsonPath)) {
+            $this->packageType = 'theme';
+        } else {
+            $this->packageType = null;
+        }
+
+        if (! $this->packageType) {
             $this->error("Error: unknown packageType, $filepath unzip to $tmpDirPath fail");
 
             return Command::FAILURE;
         }
 
+        // get install command
+        $command = match ($this->packageType) {
+            default => 'plugin:install',
+            'theme' => 'theme:install',
+        };
+
         // install command
-        $exitCode = $this->call('plugin:install', [
+        $exitCode = $this->call($command, [
             'path' => $tmpDirPath,
             '--seed' => true,
         ]);
@@ -285,7 +322,7 @@ class MarketRequireCommand extends Command
 
         // Update the upgrade_code field of the plugin table
         if (! empty($pluginResponse)) {
-            Plugin::updateUpgradeCode($pluginResponse->json('data'));
+            App::updateUpgradeCode($pluginResponse->json('data'));
         }
 
         return $exitCode;

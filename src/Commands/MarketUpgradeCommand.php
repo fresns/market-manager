@@ -8,7 +8,7 @@
 
 namespace Fresns\MarketManager\Commands;
 
-use Fresns\MarketManager\Models\Plugin;
+use Fresns\MarketManager\Models\App;
 use Illuminate\Support\Facades\Http;
 
 class MarketUpgradeCommand extends MarketRequireCommand
@@ -27,37 +27,37 @@ class MarketUpgradeCommand extends MarketRequireCommand
     {
         $fskey = $this->argument('fskey');
 
-        $plugin = Plugin::withTrashed()->where('fskey', $fskey)->first();
-        if (! $plugin) {
+        $app = App::withTrashed()->where('fskey', $fskey)->first();
+        if (! $app) {
             throw new \RuntimeException("{$fskey}: No plugin related information found");
         }
 
-        return $plugin;
+        return $app;
     }
 
     public function getDownloadUrlFromMarket()
     {
-        $plugin = $this->getPlugin();
+        $app = $this->getPlugin();
 
         // request market api
-        $pluginResponse = Http::market()->get('/api/open-source/v2/upgrade', [
-            'fskey' => $plugin->fskey,
-            'version' => $plugin->version,
-            'upgradeCode' => $plugin->upgrade_code,
+        $appResponse = Http::market()->get('/api/open-source/v3/upgrade', [
+            'fskey' => $app->fskey,
+            'version' => $app->version,
+            'upgradeCode' => $app->upgrade_code,
         ]);
 
-        if ($pluginResponse->failed()) {
+        if ($appResponse->failed()) {
             $this->error('Error: request failed (host or api)');
 
             return;
         }
 
-        if ($pluginResponse->json('code') !== 0) {
-            $this->error($pluginResponse->json('message'));
+        if ($appResponse->json('code') !== 0) {
+            $this->error($appResponse->json('message'));
 
             return;
         }
 
-        return $pluginResponse;
+        return $appResponse;
     }
 }

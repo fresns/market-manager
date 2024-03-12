@@ -12,11 +12,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Plugin extends Model
+class App extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    use Traits\PluginServiceTrait;
+    use Traits\AppServiceTrait;
+
+    const TYPE_PLUGIN = 1;
+    const TYPE_THEME = 2;
+    const TYPE_APP_REMOTE = 3;
+    const TYPE_APP_DOWNLOAD = 4;
 
     protected $guarded = [];
 
@@ -27,10 +32,10 @@ class Plugin extends Model
     ];
 
     protected $casts = [
-        'scene' => 'array',
+        'panel_usages' => 'array',
     ];
 
-    public function getSceneAttribute($value)
+    public function getPanelUsagesAttribute($value)
     {
         if (is_string($value)) {
             $value = json_decode($value, true);

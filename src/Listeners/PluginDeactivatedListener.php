@@ -8,7 +8,7 @@
 
 namespace Fresns\MarketManager\Listeners;
 
-use Fresns\MarketManager\Models\Plugin;
+use Fresns\MarketManager\Models\App;
 
 class PluginDeactivatedListener
 {
@@ -32,12 +32,12 @@ class PluginDeactivatedListener
             return;
         }
 
-        $plugin = Plugin::withTrashed()->where('fskey', $fskey)->first();
-        if (! $plugin) {
+        $app = App::withTrashed()->where('fskey', $fskey)->first();
+        if (! $app) {
             return;
         }
 
-        $plugin->update([
+        $app->update([
             'is_enabled' => false,
         ]);
     }

@@ -8,7 +8,7 @@
 
 namespace Fresns\MarketManager\Listeners;
 
-use Fresns\MarketManager\Models\Plugin as PluginModel;
+use Fresns\MarketManager\Models\App;
 use Fresns\MarketManager\Support\Json;
 use Fresns\PluginManager\Plugin;
 
@@ -46,6 +46,6 @@ class PluginInstalledListener
             return;
         }
 
-        $plugin = PluginModel::handleAppData($pluginJson);
+        $plugin = App::handleAppData($pluginJson);
     }
 }
