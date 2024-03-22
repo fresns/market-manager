@@ -35,7 +35,6 @@ trait AppServiceTrait
             'panel_usages' => $data['panelUsages'] ?? null,
             'access_path' => $data['accessPath'] ?? null,
             'settings_path' => $data['settingsPath'] ?? null,
-            'is_standalone' => $data['isStandalone'] ?? false,
             'is_upgrade' => false,
             'upgrade_code' => $data['upgradeCode'] ?? null,
             'deleted_at' => null,

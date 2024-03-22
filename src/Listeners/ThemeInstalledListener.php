@@ -40,7 +40,7 @@ class ThemeInstalledListener
 
         $theme = new Theme($fskey);
         $themeJson = Json::make($theme->getThemeJsonPath())->get();
-        if (! $pluginJson) {
+        if (! $themeJson) {
             \info('Failed to write theme information to database');
 
             return;

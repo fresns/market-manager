@@ -27,8 +27,6 @@ class HandleAppDataListener
      */
     public function handle($event): void
     {
-        $event['isStandalone'] = true;
-
         AppModel::handleAppData((array) $event);
     }
 }
