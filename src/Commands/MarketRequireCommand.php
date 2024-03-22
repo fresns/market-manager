@@ -188,7 +188,7 @@ class MarketRequireCommand extends Command
 
                     $fskey = Str::studly(basename($packageName));
                 } else {
-                    $fskey = basename($zipBall);
+                    $fskey = pathinfo($zipBall, PATHINFO_FILENAME);
                 }
 
                 $fileExtension = 'zip';

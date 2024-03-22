@@ -108,7 +108,7 @@ class Zip
         }
 
         // Make sure the unzip destination directory exists
-        $targetPath = $targetPath ?? config('plugins.paths.unzip_target_path');
+        $targetPath = $targetPath ?? config('markets.paths.unzip_target_path');
         if (empty($targetPath)) {
             \info('targetPath cannot be empty');
             throw new \RuntimeException('targetPath cannot be empty');
@@ -154,7 +154,7 @@ class Zip
 
     public function ensureDoesntHaveSubdir(string $targetPath): string
     {
-        $targetPath = $targetPath ?? config('plugins.paths.unzip_target_path');
+        $targetPath = $targetPath ?? config('markets.paths.unzip_target_path');
 
         $pattern = sprintf('%s/*', rtrim($targetPath, DIRECTORY_SEPARATOR));
 

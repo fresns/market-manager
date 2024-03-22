@@ -10,9 +10,9 @@ namespace Fresns\MarketManager\Listeners;
 
 use Fresns\MarketManager\Models\App;
 use Fresns\MarketManager\Support\Json;
-use Fresns\PluginManager\Plugin;
+use Fresns\ThemeManager\Theme;
 
-class PluginInstalledListener
+class ThemeInstalledListener
 {
     /**
      * Create the event listener.
@@ -34,18 +34,22 @@ class PluginInstalledListener
             return;
         }
 
-        if (! class_exists(Plugin::class)) {
+        if (! class_exists(Theme::class)) {
             return;
         }
 
-        $plugin = new Plugin($fskey);
-        $pluginJson = Json::make($plugin->getPluginJsonPath())->get();
+        $theme = new Theme($fskey);
+        $themeJson = Json::make($theme->getThemeJsonPath())->get();
         if (! $pluginJson) {
-            \info('Failed to write plugin information to database');
+            \info('Failed to write theme information to database');
 
             return;
         }
 
-        App::handleAppData($pluginJson);
+        if ($themeJson['functions'] ?? null) {
+            $themeJson['settingsPath'] = $fskey;
+        }
+
+        App::handleAppData($themeJson);
     }
 }

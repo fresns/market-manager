@@ -8,9 +8,9 @@
 
 namespace Fresns\MarketManager\Listeners;
 
-use Fresns\MarketManager\Models\App as AppModel;
+use Fresns\MarketManager\Models\App;
 
-class HandleAppDataListener
+class ThemeUninstalledListener
 {
     /**
      * Create the event listener.
@@ -27,8 +27,16 @@ class HandleAppDataListener
      */
     public function handle($event): void
     {
-        $event['isStandalone'] = true;
+        $fskey = $event['fskey'] ?? null;
+        if (! $fskey) {
+            return;
+        }
 
-        AppModel::handleAppData((array) $event);
+        $app = App::withTrashed()->where('fskey', $fskey)->first();
+        if (! $app) {
+            return;
+        }
+
+        $app->delete();
     }
 }
