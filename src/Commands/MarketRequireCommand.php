@@ -45,16 +45,16 @@ class MarketRequireCommand extends Command
             return $fskey;
         }
 
-        $pluginsPath = config('markets.paths.base');
+        $pluginsPath = config('markets.paths.plugins', base_path());
 
         return sprintf('%s/%s', rtrim($pluginsPath), ltrim($fskey, '/'));
     }
 
     public function getThemePath($fskey)
     {
-        $themesPath = config('markets.paths.base');
+        $themesPath = config('markets.paths.themes', base_path());
 
-        return sprintf('%s/themes/%s', rtrim($themesPath), ltrim($fskey, '/'));
+        return sprintf('%s/%s', rtrim($themesPath), ltrim($fskey, '/'));
     }
 
     public function getPluginDirectory($fskey)
@@ -146,7 +146,9 @@ class MarketRequireCommand extends Command
 
         if ($type == 'local') {
             if ($this->isLocalPath($fskey) == false) {
-                $type = null;
+                $this->error("Not the correct plugin. pluginFsKey: $fskey");
+
+                return Command::FAILURE;
             }
         }
 

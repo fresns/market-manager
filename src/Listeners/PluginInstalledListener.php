@@ -45,6 +45,7 @@ class PluginInstalledListener
 
             return;
         }
+        $pluginJson['type'] = 'plugin';
 
         App::handleAppData($pluginJson);
     }

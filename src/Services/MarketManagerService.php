@@ -56,6 +56,8 @@ class MarketManagerService
                 'upgradeCode',
             ])->all();
 
+            $result['type'] = 'app';
+
             event('app:handleData', [$result]);
         }
 

@@ -45,8 +45,10 @@ class ThemeInstalledListener
 
             return;
         }
+        $themeJson['type'] = 'theme';
 
-        if ($themeJson['functions'] ?? null) {
+        $functions = $themeJson['functions'] ?? false;
+        if ($functions) {
             $themeJson['settingsPath'] = $fskey;
         }
 

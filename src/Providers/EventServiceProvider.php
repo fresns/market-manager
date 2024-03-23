@@ -18,7 +18,9 @@ class EventServiceProvider extends ServiceProvider
      * @var array<class-string, array<int, class-string>>
      */
     protected $listen = [
-        // plugin
+        /**
+         * Plugin.
+         */
         'plugin:installing' => [
             //
         ],
@@ -33,8 +35,7 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         'plugin:activated' => [
-            // activate plugin
-            \Fresns\MarketManager\Listeners\PluginActivatedListener::class,
+            //
         ],
 
         'plugin:deactivating' => [
@@ -42,8 +43,7 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         'plugin:deactivated' => [
-            // deactivate plugin
-            \Fresns\MarketManager\Listeners\PluginDeactivatedListener::class,
+            //
         ],
 
         'plugin:uninstalling' => [
@@ -51,17 +51,18 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         'plugin:uninstalled' => [
-            // delete database data
-            \Fresns\MarketManager\Listeners\PluginUninstalledListener::class,
+            //
         ],
 
-        // theme
+        /**
+         * Theme.
+         */
         'theme:installing' => [
             //
         ],
 
         'theme:installed' => [
-            // get plugin.json insert into database
+            // get theme.json insert into database
             \Fresns\MarketManager\Listeners\ThemeInstalledListener::class,
         ],
 
@@ -70,10 +71,12 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         'theme:uninstalled' => [
-            // delete database data
-            \Fresns\MarketManager\Listeners\ThemeUninstalledListener::class,
+            //
         ],
 
+        /**
+         * App.
+         */
         'app:handleData' => [
             // app download from market, insert app meta info into database
             \Fresns\MarketManager\Listeners\HandleAppDataListener::class,
