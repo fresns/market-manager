@@ -23,7 +23,7 @@ class MarketUpgradeCommand extends MarketRequireCommand
         return parent::handle();
     }
 
-    public function getPlugin()
+    public function getApp()
     {
         $fskey = $this->argument('fskey');
 
@@ -37,7 +37,7 @@ class MarketUpgradeCommand extends MarketRequireCommand
 
     public function getDownloadUrlFromMarket()
     {
-        $app = $this->getPlugin();
+        $app = $this->getApp();
 
         // request market api
         $appResponse = Http::market()->get('/api/open-source/v3/upgrade', [
