@@ -36,7 +36,9 @@ trait AppServiceTrait
             'access_path' => $data['accessPath'] ?? null,
             'settings_path' => $data['settingsPath'] ?? null,
             'is_upgrade' => false,
+            'upgrade_version' => null,
             'upgrade_code' => $data['upgradeCode'] ?? null,
+            'is_enabled' => false,
             'deleted_at' => null,
         ]);
 
